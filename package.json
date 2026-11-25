@@ -1,0 +1,9 @@
+{
+  "name": "guerreros-de-la-luz",
+  "version": "1.0.0",
+  "description": "Guerreros de la LUZ - Dark-epic fantasy browser MMORPG in Spanish inspired by Asteria / Legend: Legacy of the Dragons",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js"
+  }
+}

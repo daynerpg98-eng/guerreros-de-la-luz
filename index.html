@@ -3,216 +3,188 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Guerreros de la LUZ: Crónicas de Asteria — MMORPG de Fantasía Épica</title>
-  <meta name="description" content="Guerreros de la LUZ: Crónicas de Asteria. MMORPG táctico de fantasía oscura en español inspirado en Legend: Legacy of the Dragons, con 8 estancias y motor persistente en el navegador." />
+  <title>Guerreros de la LUZ — MMORPG Táctico de Fantasía Épica en Español</title>
+  <meta name="description" content="Guerreros de la LUZ: MMORPG web en español inspirado en Asteria y Legend: Legacy of the Dragons. Explora las 7 regiones pintadas al óleo en HD, domina el Modo Caza, los Super-Golpes, el Cubo Éltico, Ignifer y las Estancias Finales." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Cinzel:wght@500;600;700;800&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Cinzel:wght@600;700;800&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/asteria.css" />
 </head>
 <body>
-  <div class="app-shell">
+  <div class="asteria-shell">
     <!-- ====================================================================
-         TOP STATUS & NAVIGATION BAR
+         TOP HUD BAR
          ==================================================================== -->
-    <header class="top-bar">
-      <div class="brand-cluster">
-        <div class="crest-emblem" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#f4d068" stroke-width="2">
-            <circle cx="12" cy="12" r="5" fill="#d4a843" />
-            <path d="M12 1v4M12 19v4M1 12h4M19 12h4M4.2 4.2l2.8 2.8M17 17l2.8 2.8M19.8 4.2L17 7M7 17l-2.8 2.8" />
-          </svg>
-        </div>
-        <div class="brand-titles">
-          <span class="brand-title">Guerreros de la LUZ</span>
-          <span class="brand-subtitle">Crónicas de Asteria • Las Ocho Estancias</span>
+    <header class="asteria-topbar">
+      <div class="brand-crest-group">
+        <div class="solar-emblem-diamond"><span>☀️</span></div>
+        <div class="brand-titles-col">
+          <h1>Guerreros de la LUZ</h1>
+          <small>Crónicas de Asteria • Edición Completa HD</small>
         </div>
       </div>
 
-      <!-- Hero Vitals Cluster -->
-      <div class="vitals-cluster">
-        <div class="vital-bar-wrap">
-          <div class="vital-header">
-            <span class="vital-label">Salud Vital</span>
-            <span class="vital-nums" id="top-hp-nums">180 / 180</span>
+      <div class="hud-vitals-row">
+        <div class="hud-vital-item">
+          <div class="hud-vital-head">
+            <span>❤️ Salud</span>
+            <strong id="hud-hp-text">210 / 210</strong>
           </div>
-          <div class="vital-track">
-            <div class="vital-fill hp" id="top-hp-fill" style="width: 100%"></div>
-          </div>
+          <div class="asteria-bar-track"><div class="asteria-bar-fill hp" id="hud-hp-bar" style="width:100%"></div></div>
         </div>
 
-        <div class="vital-bar-wrap">
-          <div class="vital-header">
-            <span class="vital-label">Maná Solar</span>
-            <span class="vital-nums" id="top-mp-nums">90 / 90</span>
+        <div class="hud-vital-item">
+          <div class="hud-vital-head">
+            <span>💠 Energía / Maná</span>
+            <strong id="hud-mp-text">100 / 100</strong>
           </div>
-          <div class="vital-track">
-            <div class="vital-fill mp" id="top-mp-fill" style="width: 100%"></div>
-          </div>
+          <div class="asteria-bar-track"><div class="asteria-bar-fill mp" id="hud-mp-bar" style="width:100%"></div></div>
         </div>
 
-        <div class="vital-bar-wrap">
-          <div class="vital-header">
-            <span class="vital-label">Experiencia</span>
-            <span class="vital-nums" id="top-xp-nums">0 / 100</span>
+        <div class="hud-vital-item">
+          <div class="hud-vital-head">
+            <span>⭐ Experiencia</span>
+            <strong id="hud-xp-text">0 / 100</strong>
           </div>
-          <div class="vital-track">
-            <div class="vital-fill xp" id="top-xp-fill" style="width: 0%"></div>
-          </div>
+          <div class="asteria-bar-track"><div class="asteria-bar-fill xp" id="hud-xp-bar" style="width:0%"></div></div>
         </div>
       </div>
 
-      <!-- Currencies & Global Actions -->
-      <div class="currencies-cluster">
-        <div class="currency-pill gold" title="Oro Solar">
+      <div class="hud-right-cluster">
+        <div class="currency-pouch-pill" title="Oro (o), Plata (p) y Cobre (c)">
           <span>🪙</span>
-          <span id="currency-gold">160</span>
+          <span id="hud-currency-box">6p 50c</span>
         </div>
-        <div class="currency-pill astral" title="Cristales Astrales">
-          <span>💠</span>
-          <span id="currency-astral">25</span>
-        </div>
-        <div class="currency-pill valor" title="Valor Solar">
-          <span>⚜️</span>
-          <span id="currency-valor">10</span>
-        </div>
-
-        <div class="top-actions">
-          <button class="btn-ornate" id="btn-top-atlas" title="Ver Atlas de las 8 Estancias">🗺️ Atlas</button>
-          <button class="btn-ornate" id="btn-top-audio" title="Activar/Silenciar Sintetizador WebAudio">🔊 Audio</button>
-          <button class="btn-ornate gold-cta" id="btn-top-save" title="Guardar o Exportar Partida Persistente">💾 Crónica</button>
-        </div>
+        <button class="btn-asteria" id="btn-toggle-audio" title="Activar/Silenciar Sonido WebAudio">🔊 Audio</button>
+        <button class="btn-asteria gold" data-top-modal="save" title="Guardar, Exportar o Importar Partida">💾 Partida</button>
       </div>
     </header>
 
     <!-- ====================================================================
-         MAIN 3-COLUMN MMORPG WORKSPACE
+         3-COLUMN MIDDLE WORKSPACE
          ==================================================================== -->
-    <main class="workspace-grid">
-      <!-- LEFT PANEL: HERO RAGDOLL & ATTRIBUTES -->
-      <section class="gothic-panel" aria-label="Perfil del Guerrero">
-        <div class="panel-header">
-          <span>Armadura y Atributos</span>
-          <span>Juramentado</span>
+    <main class="asteria-workspace">
+      <!-- LEFT PANEL: HERO RAGDOLL, DYNAMIC AVATAR CANVAS & STATS -->
+      <section class="asteria-panel" aria-label="Perfil del Guerrero">
+        <div class="panel-ornate-header">
+          <span>⚜️ Armadura y Perfil</span>
+          <span>Guerrero Solar</span>
         </div>
-        <div class="panel-body">
-          <div class="hero-identity-card">
-            <div class="hero-name-group">
-              <span class="hero-name" id="hero-display-name" title="Haz clic para renombrar a tu héroe">Aethelgard</span>
-              <span class="hero-class-badge" id="hero-display-class">Paladín del Alba • Orden de Helion</span>
+        <div class="panel-scroll-body">
+          <div class="hero-id-banner">
+            <div>
+              <div class="hero-name-clickable" id="hero-name-title" title="Haz clic para cambiar tu nombre">Aethelgard</div>
+              <div class="hero-clan-tag" id="hero-clan-subtitle">Clan: Hijos del Alba</div>
             </div>
-            <div class="hero-level-orb" id="hero-display-level" title="Nivel del Guerrero">1</div>
+            <div class="hero-lvl-medal" id="hero-level-badge">1</div>
           </div>
 
-          <!-- 8-Slot Paperdoll & SVG Hero Avatar -->
-          <div class="paperdoll-stage">
-            <div class="equip-column" id="paperdoll-left-col"></div>
-
-            <div class="hero-portrait-frame">
-              <div class="hero-avatar-svg">
-                <svg viewBox="0 0 140 200" width="125" height="175" xmlns="http://www.w3.org/2000/svg">
-                  <defs>
-                    <radialGradient id="haloGrad" cx="50%" cy="35%" r="45%">
-                      <stop offset="0%" stop-color="#f4d068" stop-opacity="0.45"/>
-                      <stop offset="100%" stop-color="#f4d068" stop-opacity="0"/>
-                    </radialGradient>
-                  </defs>
-                  <!-- Solar Halo -->
-                  <circle cx="70" cy="68" r="55" fill="url(#haloGrad)"/>
-                  <circle cx="70" cy="68" r="40" fill="none" stroke="#d4a843" stroke-width="1.5" stroke-dasharray="6 4"/>
-                  <!-- Cloak -->
-                  <path d="M40,65 L22,185 L118,185 L100,65 Z" fill="#3a1210" stroke="#7d4c1b" stroke-width="1.5"/>
-                  <!-- Pauldrons & Cuirass -->
-                  <path d="M32,68 Q70,52 108,68 L98,132 L42,132 Z" fill="#2b2318" stroke="#d4a843" stroke-width="2"/>
-                  <!-- Sun Crest on Chest -->
-                  <circle cx="70" cy="95" r="11" fill="#f4d068"/>
-                  <!-- Great Helm -->
-                  <path d="M53,36 L87,36 L91,64 L70,74 L49,64 Z" fill="#382d1e" stroke="#f4d068" stroke-width="2"/>
-                  <!-- Glowing Visor -->
-                  <polygon points="57,52 68,55 57,58" fill="#6be0ff"/>
-                  <polygon points="83,52 72,55 83,58" fill="#6be0ff"/>
-                  <!-- Greatsword of Light -->
-                  <rect x="67" y="110" width="6" height="75" fill="#fff3c4" stroke="#d4a843" stroke-width="1"/>
-                  <polygon points="52,115 88,115 70,122" fill="#d4a843"/>
-                </svg>
-              </div>
-              <span class="faction-banner-tag" id="hero-faction-tag">Custodio de la Llama Solar</span>
+          <div class="ragdoll-grid-stage">
+            <div class="ragdoll-col" id="ragdoll-left-slots"></div>
+            <div class="avatar-canvas-frame">
+              <canvas id="gdl-hero-avatar-canvas" width="160" height="220"></canvas>
             </div>
-
-            <div class="equip-column" id="paperdoll-right-col"></div>
+            <div class="ragdoll-col" id="ragdoll-right-slots"></div>
           </div>
 
-          <div class="stats-section-title">
+          <div class="companions-strip" id="hero-companions-strip"></div>
+
+          <div class="box-header-ornate" style="margin-bottom:6px">
             <span>Atributos de Combate</span>
-            <span class="unspent-badge" id="unspent-points-badge" style="display:none">+2 PTS</span>
+            <span class="entity-badge crimson" id="hero-unspent-pts" style="display:none">+3 PTS</span>
           </div>
-
-          <div class="stats-grid" id="hero-stats-grid"></div>
+          <div class="attributes-grid-2col" id="hero-attributes-grid"></div>
         </div>
       </section>
 
-      <!-- CENTER STAGE: PANORAMIC WORLD / TACTICAL COMBAT / ATLAS -->
-      <section class="gothic-panel center-stage-panel" aria-label="Escenario Principal">
-        <nav class="stage-nav-tabs">
-          <button class="stage-tab active" data-stage-tab="estancia">🏰 Estancia Actual</button>
-          <button class="stage-tab" data-stage-tab="combat">⚔️ Arena Táctica</button>
-          <button class="stage-tab" data-stage-tab="atlas">🗺️ Atlas de las 8 Estancias</button>
+      <!-- CENTER STAGE: HD PANORAMA, HUNTING MODE, 3-ZONE COMBAT & ATLAS -->
+      <section class="asteria-panel" aria-label="Escenario Central">
+        <nav class="center-stage-nav">
+          <div style="display:flex;gap:5px;flex-wrap:wrap">
+            <button class="btn-asteria active" data-nav-view="location">🏰 Estancia HD</button>
+            <button class="btn-asteria" data-nav-view="hunting">🏹 Modo Caza</button>
+            <button class="btn-asteria" data-nav-view="combat">⚔️ Combate Táctico</button>
+            <button class="btn-asteria" data-nav-view="atlas">🗺️ Atlas (7 Regiones)</button>
+          </div>
+          <div style="display:flex;gap:5px;flex-wrap:wrap">
+            <button class="btn-asteria sm gold" data-top-modal="cube">🧊 Cubo Éltico</button>
+            <button class="btn-asteria sm gold" data-top-modal="mounts">🔥 Ignifer</button>
+            <button class="btn-asteria sm crimson" data-top-modal="arena">🏟️ Arena PvP (16 IA)</button>
+          </div>
         </nav>
-        <div class="stage-viewport" id="center-stage-viewport"></div>
+        <div class="center-stage-body" id="center-stage-container"></div>
       </section>
 
-      <!-- RIGHT PANEL: INVENTORY, QUESTS, FORGE & CODEX -->
-      <section class="gothic-panel" aria-label="Gestión y Misiones">
-        <nav class="sub-tabs">
-          <button class="sub-tab-btn active" data-right-tab="inventory">🎒 Alforja</button>
-          <button class="sub-tab-btn" data-right-tab="quests">📜 Misiones</button>
-          <button class="sub-tab-btn" data-right-tab="forge">⚒️ Forja</button>
-          <button class="sub-tab-btn" data-right-tab="codex">🏛️ Orden</button>
+      <!-- RIGHT PANEL: 20-SLOT INVENTORY, QUESTS & SPECIAL SYSTEMS -->
+      <section class="asteria-panel" aria-label="Mochila y Sistemas">
+        <nav class="right-dock-tabs">
+          <button class="dock-tab-btn active" data-right-dock-tab="bag">🎒 Mochila (70+)</button>
+          <button class="dock-tab-btn" data-right-dock-tab="quests">📜 Misiones</button>
+          <button class="dock-tab-btn" data-right-dock-tab="specials">✨ Sistemas</button>
         </nav>
-        <div class="panel-body" id="right-panel-body"></div>
+        <div class="panel-scroll-body" id="right-dock-content"></div>
       </section>
     </main>
 
     <!-- ====================================================================
-         BOTTOM DOCK: CHRONICLE LOG & QUICK CONSUMABLES BELT
+         BOTTOM CHAT & CHRONICLE DOCK
          ==================================================================== -->
-    <footer class="bottom-dock">
-      <section class="gothic-panel chronicle-panel" aria-label="Crónica de Eventos">
-        <div class="panel-header">
-          <span>Crónica de Asteria — Registro de Batalla y Eventos</span>
-          <span>En Vivo</span>
+    <footer class="asteria-bottom-dock">
+      <section class="asteria-panel" aria-label="Chat y Crónica de Asteria">
+        <div class="chat-channels-bar">
+          <div class="chat-tabs-group">
+            <button class="chat-ch-btn active" data-chat-ch="todos">Todos</button>
+            <button class="chat-ch-btn" data-chat-ch="sistema">Crónica</button>
+            <button class="chat-ch-btn" data-chat-ch="general">General (16 IA)</button>
+            <button class="chat-ch-btn" data-chat-ch="clan">Clan</button>
+            <button class="chat-ch-btn" data-chat-ch="comercio">Comercio</button>
+          </div>
+          <span style="font-size:10px;color:var(--xp-bright)">● 16 Guerreros de la Luz en línea</span>
         </div>
-        <div class="chronicle-feed" id="chronicle-feed"></div>
+        <div class="chat-feed-box" id="gdl-chat-feed"></div>
+        <div class="chat-input-row">
+          <input type="text" id="gdl-chat-input" class="chat-text-input" placeholder="Escribe en el canal de la Taberna o del Clan y pulsa Enter..." />
+          <button class="btn-asteria sm gold" id="gdl-chat-send">Enviar</button>
+        </div>
       </section>
 
-      <section class="gothic-panel quickbelt-panel" aria-label="Cinturón Táctico">
-        <div class="stats-section-title" style="margin-top:0">
-          <span>Cinturón Rápido (Teclas 1-4)</span>
-          <span>Reliquias</span>
+      <section class="asteria-panel" aria-label="Accesos Directos y Estado">
+        <div class="panel-ornate-header">
+          <span>⚡ Santuarios Rápidos</span>
+          <span id="persist-status-indicator" style="color:var(--xp-bright);font-size:10px">Persistente</span>
         </div>
-        <div class="belt-slots-row" id="belt-slots-row"></div>
-        <div class="engine-status-row">
-          <span class="save-indicator">● <span id="save-status-text">Motor Persistente Activo</span></span>
-          <span>v2.0 • 8 Estancias</span>
+        <div class="panel-scroll-body" style="display:grid;grid-template-columns:1fr 1fr;gap:5px;align-content:start">
+          <button class="btn-asteria sm" data-top-modal="professions">⚒️ 6 Profesiones</button>
+          <button class="btn-asteria sm" data-top-modal="medals">🎖️ Medallas</button>
+          <button class="btn-asteria sm" data-top-modal="mirror">🪞 Espejo Mágico</button>
+          <button class="btn-asteria sm" data-top-modal="tavern">🎲 Dados Taberna</button>
+          <button class="btn-asteria sm gold" data-top-modal="quests" style="grid-column:1 / -1">📜 Ver Códice de Misiones</button>
         </div>
       </section>
     </footer>
   </div>
 
   <!-- ======================================================================
-       MODAL WINDOW (NPC DIALOGUE, SHOPS, VICTORY CINEMATIC & SAVE EXPORT)
+       HD ILLUSTRATED MODAL WINDOW
        ====================================================================== -->
-  <div class="modal-backdrop hidden" id="modal-backdrop" role="dialog" aria-modal="true">
-    <div class="modal-window">
-      <div class="modal-header">
-        <span class="modal-title" id="modal-title">Diálogo</span>
-        <button class="btn-ornate" id="btn-modal-close">Cerrar ✕</button>
+  <div class="gdl-modal-backdrop hidden" id="gdl-modal-backdrop" role="dialog" aria-modal="true">
+    <div class="gdl-modal-window">
+      <div class="gdl-modal-header">
+        <div id="gdl-modal-title">Santuario</div>
+        <button class="btn-asteria sm" id="btn-close-gdl-modal">Cerrar ✕</button>
       </div>
-      <div class="modal-body" id="modal-body"></div>
+      <div class="gdl-modal-body" id="gdl-modal-body"></div>
     </div>
   </div>
 
-  <script src="data.js"></script>
-  <script src="engine.js"></script>
+  <script src="js/artAssets.js"></script>
+  <script src="js/avatarCanvas.js"></script>
+  <script src="js/combatCanvas.js"></script>
+  <script src="js/huntingCanvas.js"></script>
+  <script src="js/views/mainViews.js"></script>
+  <script src="js/views/specialModals.js"></script>
+  <script src="js/views/chatPanel.js"></script>
+  <script src="js/uiShell.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>

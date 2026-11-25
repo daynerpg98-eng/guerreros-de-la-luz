@@ -1,31 +1,35 @@
-# Guerreros de la LUZ: Crónicas de Asteria
+# Guerreros de la LUZ — Crónicas de Asteria (Edición Completa HD)
 
-**MMORPG Táctico de Fantasía Épica Oscura en Español**, inspirado en la dirección artística y mecánicas clásicas de *Asteria / Legend: Legacy of the Dragons (Faeo)*.
+**MMORPG Táctico Web en Español** inspirado en *Asteria / Legend: Legacy of the Dragons (Faeo)*, con escenarios panorámicos 16:9 y retratos 1:1 pintados al óleo en HD, motor autónomo persistente en el navegador (`localStorage`) y todas las estancias finales completadas.
 
-🌐 **Jugar en vivo (GitHub Pages):** [https://daynerpg98-eng.github.io/guerreros-de-la-luz/](https://daynerpg98-eng.github.io/guerreros-de-la-luz/)
+🌐 **Jugar Ahora (GitHub Pages):** [https://daynerpg98-eng.github.io/guerreros-de-la-luz/](https://daynerpg98-eng.github.io/guerreros-de-la-luz/)
 
 ---
 
-## Características Principales
+## Contenido Completo de la Versión Final
 
-1. **Las Ocho Estancias Completas (I a VIII)**:
-   - **Estancia I**: *Bastión del Alba* (Ciudadela Capital de Helion — Santuario, Instructores y Forja Real)
-   - **Estancia II**: *Frontera de la Ceniza* (Tierras Quemadas del Este — Capitán Kaelgor)
-   - **Estancia III**: *Bosque de los Ecos Espectrales* (Arboleda de Niebla Astral — Sylvaris, Ánima del Crepúsculo)
-   - **Estancia IV**: *Catacumbas de Cristal* (Subsuelo de Aethelgard — Veta Real de Luminita y Krystallos)
-   - **Estancia V**: *Forja de los Titanes* (Caldera Volcánica de Ignis-Val — Vulkarion, Señor de la Caldera)
-   - **Estancia VI (Estancia Final I)**: *Claustro del Sol Quebrado* (Archinquisidor Vaelen el Quebrado)
-   - **Estancia VII (Estancia Final II)**: *Muralla del Eclipse* (Vorathax, Dragón de la Corona Negra)
-   - **Estancia VIII (Estancia Final Suprema)**: *Santuario del Trono del Abismo Solar* (Emperador Malakor, Soberano del Eclipse Eterno)
+### 1. Las 7 Locaciones Panorámicas HD (`16:9` pintadas al óleo) y Estancias Finales
+- **Ciudadela de la Luz** (`assets/locations/ciudadela_luz.jpg`) — *Bastión Capital de la Orden Solar*
+- **Llanuras del Alba** (`assets/locations/llanuras_alba.jpg`) — *Campos de Batalla de los Antiguos Reyes*
+- **Bosque de los Ecos** (`assets/locations/bosque_ecos.jpg`) — *Arboleda de los Monolitos Rúnicos (Jefe: Sylvaris)*
+- **Lago del Espejo** (`assets/locations/lago_espejo.jpg`) — *Santuario Subterráneo de las Estrellas (Jefe: Astraios, Leviatán Estelar)*
+- **Cuevas Cristalinas** (`assets/locations/cuevas_cristalinas.jpg`) — *Estancia Final I: Bóvedas de Luminita Profunda (Jefe: Krystallos, Soberano de Cuarzo)*
+- **Templo Antiguo** (`assets/locations/templo_antiguo.jpg`) — *Estancia Final II: Santuario del Rayo Celestial (Jefe: Archinquisidor Vaelen)*
+- **Frontera de Ceniza** (`assets/locations/frontera_ceniza.jpg`) — *Estancia Final Suprema: Ciudadela del Eclipse y del Dragón (Jefes: Dragón Vorathax y Emperador Malakor)*
 
-2. **Sistema de Combate Táctico por Zonas (*Estilo Faeo / Legend*)**:
-   - Selección táctica en tiempo real por turno de **Zona de Ataque** (*Cabeza, Torso, Guardia Baja*) y **Zona de Bloqueo**.
-   - Cuatro técnicas solares activas: *Tajo de Acero*, *Veredicto Solar*, *Égida del Alba* y *Supernova de Helion*.
+### 2. Retratos HD `1:1` de NPCs y 11 Maestres Interactivos
+- **Comandante Aurelius** (`assets/npcs/npc_comandante_aurelius.jpg`) — Misiones de la Orden, Medallas y Clanes
+- **Herrero Korgan** (`assets/npcs/npc_herrero_korgan.jpg`) — Herrería, Armamento y las 6 Profesiones
+- **Alquimista Selene** (`assets/npcs/npc_alquimista_selene.jpg`) — Elixires, Cubo Éltico y Espejo Mágico
+- **Explorador Lyon** (`assets/npcs/npc_explorador_lyon.jpg`) — Modo Caza, Mascotas y Monturas (`Ignifer`)
+- Además de *Tabernero Balthus*, *Archimago Valerion*, *Domador Real Varek*, *Archidruida Aelion*, *Oráculo Miriel*, *Arcanista Mayor Orian*, *Sumo Custodio Solaris* y *General Auron Espada-Solar*.
 
-3. **Ragdoll de 8 Ranuras, Alforja y Forja de los Titanes**:
-   - Equipamiento visual en 8 ranuras (*Yelmo, Amuleto, Arma, Coraza, Égida, Manto, Sortija, Grebas*).
-   - Sistema de templado de armas y armaduras (`+1`, `+2`, `+3`...) con *Lingotes de Luminita Pura* y *Núcleos de Obsidiana Abisal*.
-
-4. **Motor Persistente en el Navegador**:
-   - Guardado automático continuo e instantáneo en `localStorage` con respaldo asíncrono en `IndexedDB`.
-   - Exportación e importación de partidas mediante código Base64 o archivo `.json`.
+### 3. Sistemas Tácticos y Especiales (`public/js/`)
+- **Combate Direccional de 3 Zonas y Super-Golpes (`combatCanvas.js` + `mainViews.js`)**: Apunta a *Cabeza*, *Torso* o *Piernas*, cubre tu guardia y encadena secuencias de 3 impactos para desatar *Quebrantasoles de Aurelius*, *Ejecución de Korgan* o *Tempestad del Eclipse*.
+- **Modo Caza en Tiempo Real (`huntingCanvas.js`)**: Lienzo HTML5 interactivo con criaturas en movimiento y vetas/recursos recolectables.
+- **Ragdoll Dinámico en Canvas (`avatarCanvas.js`)**: Renderizado en vivo del guerrero con su armadura, arma, escudo, yelmo, manto, halo solar y el aura ígnea de **Ignifer**.
+- **Sistemas Especiales Ilustrados en HD (`specialModals.js`)**:
+  - **Cubo Éltico**: Síntesis y transmutación de reliquias míticas (*Aethel-Valkyr*, *Hoja Prismática*, *Armadura del Templo*).
+  - **6 Profesiones**: *Minería Rúnica*, *Herbolaria Solar*, *Pesca Astral*, *Herrería de Guerra*, *Alquimia Suprema* y *Joyería Arcana*.
+  - **Monturas (`Ignifer`) y Mascotas de Combate**: Asistencia de daño automático en cada turno.
+  - **Panteón de Medallas**, **Espejo Mágico de Solaria**, **Dados de Taberna** y **Coliseo de Arena PvP + Clanes** contra los **16 Guerreros IA en español**.
