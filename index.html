@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Guerreros de la LUZ: Crónicas de Asteria — MMORPG de Fantasía Épica</title>
+  <meta name="description" content="Guerreros de la LUZ: Crónicas de Asteria. MMORPG táctico de fantasía oscura en español inspirado en Legend: Legacy of the Dragons, con 8 estancias y motor persistente en el navegador." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Cinzel:wght@500;600;700;800&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <!-- ====================================================================
+         TOP STATUS & NAVIGATION BAR
+         ==================================================================== -->
+    <header class="top-bar">
+      <div class="brand-cluster">
+        <div class="crest-emblem" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#f4d068" stroke-width="2">
+            <circle cx="12" cy="12" r="5" fill="#d4a843" />
+            <path d="M12 1v4M12 19v4M1 12h4M19 12h4M4.2 4.2l2.8 2.8M17 17l2.8 2.8M19.8 4.2L17 7M7 17l-2.8 2.8" />
+          </svg>
+        </div>
+        <div class="brand-titles">
+          <span class="brand-title">Guerreros de la LUZ</span>
+          <span class="brand-subtitle">Crónicas de Asteria • Las Ocho Estancias</span>
+        </div>
+      </div>
+
+      <!-- Hero Vitals Cluster -->
+      <div class="vitals-cluster">
+        <div class="vital-bar-wrap">
+          <div class="vital-header">
+            <span class="vital-label">Salud Vital</span>
+            <span class="vital-nums" id="top-hp-nums">180 / 180</span>
+          </div>
+          <div class="vital-track">
+            <div class="vital-fill hp" id="top-hp-fill" style="width: 100%"></div>
+          </div>
+        </div>
+
+        <div class="vital-bar-wrap">
+          <div class="vital-header">
+            <span class="vital-label">Maná Solar</span>
+            <span class="vital-nums" id="top-mp-nums">90 / 90</span>
+          </div>
+          <div class="vital-track">
+            <div class="vital-fill mp" id="top-mp-fill" style="width: 100%"></div>
+          </div>
+        </div>
+
+        <div class="vital-bar-wrap">
+          <div class="vital-header">
+            <span class="vital-label">Experiencia</span>
+            <span class="vital-nums" id="top-xp-nums">0 / 100</span>
+          </div>
+          <div class="vital-track">
+            <div class="vital-fill xp" id="top-xp-fill" style="width: 0%"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Currencies & Global Actions -->
+      <div class="currencies-cluster">
+        <div class="currency-pill gold" title="Oro Solar">
+          <span>🪙</span>
+          <span id="currency-gold">160</span>
+        </div>
+        <div class="currency-pill astral" title="Cristales Astrales">
+          <span>💠</span>
+          <span id="currency-astral">25</span>
+        </div>
+        <div class="currency-pill valor" title="Valor Solar">
+          <span>⚜️</span>
+          <span id="currency-valor">10</span>
+        </div>
+
+        <div class="top-actions">
+          <button class="btn-ornate" id="btn-top-atlas" title="Ver Atlas de las 8 Estancias">🗺️ Atlas</button>
+          <button class="btn-ornate" id="btn-top-audio" title="Activar/Silenciar Sintetizador WebAudio">🔊 Audio</button>
+          <button class="btn-ornate gold-cta" id="btn-top-save" title="Guardar o Exportar Partida Persistente">💾 Crónica</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- ====================================================================
+         MAIN 3-COLUMN MMORPG WORKSPACE
+         ==================================================================== -->
+    <main class="workspace-grid">
+      <!-- LEFT PANEL: HERO RAGDOLL & ATTRIBUTES -->
+      <section class="gothic-panel" aria-label="Perfil del Guerrero">
+        <div class="panel-header">
+          <span>Armadura y Atributos</span>
+          <span>Juramentado</span>
+        </div>
+        <div class="panel-body">
+          <div class="hero-identity-card">
+            <div class="hero-name-group">
+              <span class="hero-name" id="hero-display-name" title="Haz clic para renombrar a tu héroe">Aethelgard</span>
+              <span class="hero-class-badge" id="hero-display-class">Paladín del Alba • Orden de Helion</span>
+            </div>
+            <div class="hero-level-orb" id="hero-display-level" title="Nivel del Guerrero">1</div>
+          </div>
+
+          <!-- 8-Slot Paperdoll & SVG Hero Avatar -->
+          <div class="paperdoll-stage">
+            <div class="equip-column" id="paperdoll-left-col"></div>
+
+            <div class="hero-portrait-frame">
+              <div class="hero-avatar-svg">
+                <svg viewBox="0 0 140 200" width="125" height="175" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <radialGradient id="haloGrad" cx="50%" cy="35%" r="45%">
+                      <stop offset="0%" stop-color="#f4d068" stop-opacity="0.45"/>
+                      <stop offset="100%" stop-color="#f4d068" stop-opacity="0"/>
+                    </radialGradient>
+                  </defs>
+                  <!-- Solar Halo -->
+                  <circle cx="70" cy="68" r="55" fill="url(#haloGrad)"/>
+                  <circle cx="70" cy="68" r="40" fill="none" stroke="#d4a843" stroke-width="1.5" stroke-dasharray="6 4"/>
+                  <!-- Cloak -->
+                  <path d="M40,65 L22,185 L118,185 L100,65 Z" fill="#3a1210" stroke="#7d4c1b" stroke-width="1.5"/>
+                  <!-- Pauldrons & Cuirass -->
+                  <path d="M32,68 Q70,52 108,68 L98,132 L42,132 Z" fill="#2b2318" stroke="#d4a843" stroke-width="2"/>
+                  <!-- Sun Crest on Chest -->
+                  <circle cx="70" cy="95" r="11" fill="#f4d068"/>
+                  <!-- Great Helm -->
+                  <path d="M53,36 L87,36 L91,64 L70,74 L49,64 Z" fill="#382d1e" stroke="#f4d068" stroke-width="2"/>
+                  <!-- Glowing Visor -->
+                  <polygon points="57,52 68,55 57,58" fill="#6be0ff"/>
+                  <polygon points="83,52 72,55 83,58" fill="#6be0ff"/>
+                  <!-- Greatsword of Light -->
+                  <rect x="67" y="110" width="6" height="75" fill="#fff3c4" stroke="#d4a843" stroke-width="1"/>
+                  <polygon points="52,115 88,115 70,122" fill="#d4a843"/>
+                </svg>
+              </div>
+              <span class="faction-banner-tag" id="hero-faction-tag">Custodio de la Llama Solar</span>
+            </div>
+
+            <div class="equip-column" id="paperdoll-right-col"></div>
+          </div>
+
+          <div class="stats-section-title">
+            <span>Atributos de Combate</span>
+            <span class="unspent-badge" id="unspent-points-badge" style="display:none">+2 PTS</span>
+          </div>
+
+          <div class="stats-grid" id="hero-stats-grid"></div>
+        </div>
+      </section>
+
+      <!-- CENTER STAGE: PANORAMIC WORLD / TACTICAL COMBAT / ATLAS -->
+      <section class="gothic-panel center-stage-panel" aria-label="Escenario Principal">
+        <nav class="stage-nav-tabs">
+          <button class="stage-tab active" data-stage-tab="estancia">🏰 Estancia Actual</button>
+          <button class="stage-tab" data-stage-tab="combat">⚔️ Arena Táctica</button>
+          <button class="stage-tab" data-stage-tab="atlas">🗺️ Atlas de las 8 Estancias</button>
+        </nav>
+        <div class="stage-viewport" id="center-stage-viewport"></div>
+      </section>
+
+      <!-- RIGHT PANEL: INVENTORY, QUESTS, FORGE & CODEX -->
+      <section class="gothic-panel" aria-label="Gestión y Misiones">
+        <nav class="sub-tabs">
+          <button class="sub-tab-btn active" data-right-tab="inventory">🎒 Alforja</button>
+          <button class="sub-tab-btn" data-right-tab="quests">📜 Misiones</button>
+          <button class="sub-tab-btn" data-right-tab="forge">⚒️ Forja</button>
+          <button class="sub-tab-btn" data-right-tab="codex">🏛️ Orden</button>
+        </nav>
+        <div class="panel-body" id="right-panel-body"></div>
+      </section>
+    </main>
+
+    <!-- ====================================================================
+         BOTTOM DOCK: CHRONICLE LOG & QUICK CONSUMABLES BELT
+         ==================================================================== -->
+    <footer class="bottom-dock">
+      <section class="gothic-panel chronicle-panel" aria-label="Crónica de Eventos">
+        <div class="panel-header">
+          <span>Crónica de Asteria — Registro de Batalla y Eventos</span>
+          <span>En Vivo</span>
+        </div>
+        <div class="chronicle-feed" id="chronicle-feed"></div>
+      </section>
+
+      <section class="gothic-panel quickbelt-panel" aria-label="Cinturón Táctico">
+        <div class="stats-section-title" style="margin-top:0">
+          <span>Cinturón Rápido (Teclas 1-4)</span>
+          <span>Reliquias</span>
+        </div>
+        <div class="belt-slots-row" id="belt-slots-row"></div>
+        <div class="engine-status-row">
+          <span class="save-indicator">● <span id="save-status-text">Motor Persistente Activo</span></span>
+          <span>v2.0 • 8 Estancias</span>
+        </div>
+      </section>
+    </footer>
+  </div>
+
+  <!-- ======================================================================
+       MODAL WINDOW (NPC DIALOGUE, SHOPS, VICTORY CINEMATIC & SAVE EXPORT)
+       ====================================================================== -->
+  <div class="modal-backdrop hidden" id="modal-backdrop" role="dialog" aria-modal="true">
+    <div class="modal-window">
+      <div class="modal-header">
+        <span class="modal-title" id="modal-title">Diálogo</span>
+        <button class="btn-ornate" id="btn-modal-close">Cerrar ✕</button>
+      </div>
+      <div class="modal-body" id="modal-body"></div>
+    </div>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="engine.js"></script>
+</body>
+</html>
