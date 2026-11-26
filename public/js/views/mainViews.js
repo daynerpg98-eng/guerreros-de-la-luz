@@ -193,34 +193,36 @@ window.GDL_MAIN_VIEWS = (function () {
           </div>
         </div>
 
-        <!-- Lower Tactical Deck: NPCs, Creatures, Collapsible Transitions & Warriors in Zone -->
-        <div class="location-lower-grid">
+        <!-- Lower Tactical Deck: Clean Sub-Tabs (No Simultaneous Clutter) -->
+        <div class="location-lower-deck">
           ${lastFightBannerHtml}
+          <div class="loc-deck-tabs" role="tablist">
+            <button class="loc-deck-tab ${(state.ui.locDeckTab || 'npcs') === 'npcs' ? 'active' : ''}" data-loc-deck-tab="npcs">
+              🏛️ Maestres y Personajes (${locNpcs.length})
+            </button>
+            <button class="loc-deck-tab ${state.ui.locDeckTab === 'creatures' ? 'active' : ''}" data-loc-deck-tab="creatures">
+              ⚔️ Criaturas y Jefes (${locCreatures.length})
+            </button>
+            <button class="loc-deck-tab ${state.ui.locDeckTab === 'travel' ? 'active' : ''}" data-loc-deck-tab="travel">
+              🧭 Rutas y Guerreros en la Zona (${zoneWarriors.length})
+            </button>
+          </div>
 
-          <div class="loc-column-box">
-            <div class="box-header-ornate">
-              <span>🏛️ Maestres y Personajes en ${loc.name}</span>
-              <span>${locNpcs.length}</span>
-            </div>
-            <div class="entities-scroll-list">
+          <div class="loc-deck-pane ${(state.ui.locDeckTab || 'npcs') === 'npcs' ? '' : 'loc-pane-hidden'}" data-loc-deck-pane="npcs">
+            <div class="entities-grid-2col">
               ${npcsCardsHtml}
             </div>
           </div>
 
-          <div class="loc-column-box">
-            <div class="box-header-ornate">
-              <span>⚔️ Criaturas y Jefes de Estancia</span>
-              <span>${locCreatures.length}</span>
-            </div>
-            <div class="entities-scroll-list">
+          <div class="loc-deck-pane ${state.ui.locDeckTab === 'creatures' ? '' : 'loc-pane-hidden'}" data-loc-deck-pane="creatures">
+            <div class="entities-grid-2col">
               ${creaturesCardsHtml}
             </div>
           </div>
 
-          <!-- Collapsible Transitions (Переходы) & Warriors in Zone (Guerreros en la Zona) -->
-          <div class="loc-column-box full-span" id="zone-warriors-transitions-panel">
-            <div class="box-header-ornate">
-              <span>🧭 Transiciones (Переходы) y 👥 Guerreros en la Zona (${zoneWarriors.length} en ${loc.name})</span>
+          <div class="loc-deck-pane ${state.ui.locDeckTab === 'travel' ? '' : 'loc-pane-hidden'}" data-loc-deck-pane="travel" id="zone-warriors-transitions-panel">
+            <div class="box-header-ornate" style="margin-bottom:8px">
+              <span>🧭 Transiciones (Переходы) y 👥 Guerreros en ${loc.name}</span>
               <button class="btn-asteria sm" id="btn-toggle-zone-panel">${
                 isCollapsed ? '▼ Expandir Panel' : '▲ Plegar Panel'
               }</button>
@@ -229,10 +231,10 @@ window.GDL_MAIN_VIEWS = (function () {
               isCollapsed
                 ? ''
                 : `
-              <div class="travel-gates-grid" style="margin-bottom:8px">
+              <div class="travel-gates-grid" style="margin-bottom:10px">
                 ${travelGatesHtml}
               </div>
-              <div class="entities-scroll-list">
+              <div class="entities-grid-2col">
                 ${warriorsInZoneHtml}
               </div>
             `
@@ -241,6 +243,20 @@ window.GDL_MAIN_VIEWS = (function () {
         </div>
       </div>
     `;
+
+    // Bind lower location sub-tabs
+    container.querySelectorAll('[data-loc-deck-tab]').forEach((tabBtn) => {
+      tabBtn.addEventListener('click', () => {
+        const nextTab = tabBtn.getAttribute('data-loc-deck-tab');
+        state.ui.locDeckTab = nextTab;
+        container.querySelectorAll('[data-loc-deck-tab]').forEach((b) => {
+          b.classList.toggle('active', b.getAttribute('data-loc-deck-tab') === nextTab);
+        });
+        container.querySelectorAll('[data-loc-deck-pane]').forEach((pane) => {
+          pane.classList.toggle('loc-pane-hidden', pane.getAttribute('data-loc-deck-pane') !== nextTab);
+        });
+      });
+    });
 
     // Bind hotspot pins
     container.querySelectorAll('[data-hs-type]').forEach((pin) => {

@@ -141,13 +141,19 @@
         </div>
       </section>
 
-      <!-- CENTER STAGE: 14-BUTTON ASTERIA NAVIGATION BAR + MAIN VIEWPORT -->
+      <!-- CENTER STAGE: CLEAN PRIMARY TABS + COLLAPSIBLE ASTERIA SYSTEMS DRAWER -->
       <section class="asteria-panel" aria-label="Escenario Central">
         <nav class="center-stage-nav" aria-label="Navegación Principal de Asteria">
-          <div class="asteria-14-nav-grid">
-            <button class="btn-asteria sm active" data-nav-view="location" title="Estancia Actual (Локация)">🏰 Estancia</button>
-            <button class="btn-asteria sm" data-nav-view="hunting" title="Modo Caza con Radar y Filtros (Охота)">🏹 Modo Caza</button>
-            <button class="btn-asteria sm" data-nav-view="combat" title="Combate Táctico de 3 Zonas (Бой)">⚔️ Combate</button>
+          <div class="primary-nav-row">
+            <div class="primary-view-tabs">
+              <button class="nav-tab-pill active" data-nav-view="location" title="Estancia Actual (Локация)">🏰 Estancia</button>
+              <button class="nav-tab-pill" data-nav-view="hunting" title="Modo Caza con Radar y Filtros (Охота)">🏹 Modo Caza</button>
+              <button class="nav-tab-pill" data-nav-view="combat" title="Combate Táctico de 3 Zonas (Бой)">⚔️ Combate</button>
+              <button class="nav-tab-pill" data-nav-view="atlas" title="Atlas Cartográfico de las 7 Regiones (Карта)">🗺️ Atlas</button>
+            </div>
+            <button class="btn-asteria sm gold" id="btn-toggle-systems-drawer" title="Desplegar los 10 Sistemas de Asteria">✨ Sistemas de Asteria ▾</button>
+          </div>
+          <div class="asteria-14-nav-grid secondary-systems-drawer collapsed" id="asteria-systems-drawer">
             <button class="btn-asteria sm crimson" data-top-modal="battlefields" title="Campos de Batalla y Valor (Поля битв)">🚩 Campos de Batalla</button>
             <button class="btn-asteria sm gold" data-top-modal="instances" title="La Gruta (ГРОТ) e Instancias PvE (Инстансы)">🕳️ Gruta e Instancias</button>
             <button class="btn-asteria sm" data-top-modal="estate" title="Hacienda Personal y Edificios (Поместье)">🏛️ Hacienda</button>
@@ -158,7 +164,6 @@
             <button class="btn-asteria sm" data-top-modal="bank" title="Banco Imperial y Casa de Subastas (Банк/Аукцион)">🏦 Banco y Subasta</button>
             <button class="btn-asteria sm" data-top-modal="profile" title="Perfil de Personaje, Regalos y Promocódigos (Анкета)">👤 Perfil y Promos</button>
             <button class="btn-asteria sm" data-top-modal="library" title="Biblioteca de Faeo y Acertijos de Balagur (Библиотека)">📚 Biblioteca</button>
-            <button class="btn-asteria sm" data-nav-view="atlas" title="Atlas Cartográfico de las 7 Regiones (Карта)">🗺️ Atlas</button>
           </div>
         </nav>
         <div class="center-stage-body" id="center-stage-container"></div>

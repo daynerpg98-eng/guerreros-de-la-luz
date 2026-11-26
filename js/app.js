@@ -2914,6 +2914,21 @@ window.GDL_APP = (function () {
       });
     }
 
+    const drawerBtn = document.getElementById('btn-toggle-systems-drawer');
+    const drawerEl = document.getElementById('asteria-systems-drawer');
+    if (drawerBtn && drawerEl) {
+      drawerBtn.addEventListener('click', () => {
+        const isCollapsed = drawerEl.classList.toggle('collapsed');
+        drawerBtn.textContent = isCollapsed ? '✨ Sistemas de Asteria ▾' : '✨ Sistemas de Asteria ▴';
+      });
+      drawerEl.querySelectorAll('[data-top-modal]').forEach((b) => {
+        b.addEventListener('click', () => {
+          drawerEl.classList.add('collapsed');
+          drawerBtn.textContent = '✨ Sistemas de Asteria ▾';
+        });
+      });
+    }
+
     CHAT.initChatPanel(() => state.hero.name);
     setInterval(saveState, 15000);
     saveState();
