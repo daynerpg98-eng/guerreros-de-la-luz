@@ -735,16 +735,76 @@ window.GDL_MAIN_VIEWS = (function () {
   }
 
   /* ------------------------------------------------------------------------
-     4. ATLAS CARTOGRÁFICO DE LAS 7 REGIONES Y ESTANCIAS FINALES
+     4. MAPA INTERACTIVO DE ZONAS DE ASTERIA (CONNECTED NODE MAP + REGIONS)
      ------------------------------------------------------------------------ */
+  const MAP_NODE_COORDS = {
+    ciudadela_luz:      { x: 130, y: 155, short: 'Ciudadela' },
+    llanuras_alba:      { x: 295, y: 95,  short: 'Llanuras' },
+    bosque_ecos:        { x: 315, y: 215, short: 'Bosque Ecos' },
+    lago_espejo:        { x: 475, y: 235, short: 'Lago Espejo' },
+    cuevas_cristalinas: { x: 525, y: 120, short: 'Cuevas Cristal' },
+    templo_antiguo:     { x: 675, y: 195, short: 'Templo Antiguo' },
+    frontera_ceniza:    { x: 785, y: 95,  short: 'Frontera Ceniza' }
+  };
+
   function renderAtlasView(container, state, actions) {
     window.GDL_HUNTING_CANVAS.stopHuntingCanvas();
     if (window.GDL_COMBAT_CANVAS && window.GDL_COMBAT_CANVAS.stopBattleLoop) {
       window.GDL_COMBAT_CANVAS.stopBattleLoop();
     }
 
+    const curLoc = ART.LOCATIONS.find((l) => l.id === state.world.currentLocation) || ART.LOCATIONS[0];
+    const adjacentSet = new Set(curLoc.connectedTo || []);
+
+    // Build deduplicated route lines between connected zones
+    const drawnEdges = new Set();
+    const edgesSvg = [];
+    ART.LOCATIONS.forEach((loc) => {
+      const from = MAP_NODE_COORDS[loc.id];
+      if (!from) return;
+      (loc.connectedTo || []).forEach((destId) => {
+        const to = MAP_NODE_COORDS[destId];
+        if (!to) return;
+        const edgeKey = [loc.id, destId].sort().join('--');
+        if (drawnEdges.has(edgeKey)) return;
+        drawnEdges.add(edgeKey);
+        const isActiveRoute = loc.id === curLoc.id || destId === curLoc.id;
+        edgesSvg.push(
+          `<line x1="${from.x}" y1="${from.y}" x2="${to.x}" y2="${to.y}" class="map-route-line ${
+            isActiveRoute ? 'active-route' : ''
+          }" />`
+        );
+      });
+    });
+
+    const nodesSvg = ART.LOCATIONS.map((loc) => {
+      const pos = MAP_NODE_COORDS[loc.id];
+      if (!pos) return '';
+      const isCur = loc.id === curLoc.id;
+      const isAdj = adjacentSet.has(loc.id);
+      const locked = state.hero.level < loc.minLevel;
+      const cls = isCur
+        ? 'map-node current'
+        : locked
+        ? 'map-node locked'
+        : isAdj
+        ? 'map-node adjacent'
+        : 'map-node';
+      return `
+        <g class="${cls}" data-atlas-go="${loc.id}" style="cursor:${locked ? 'not-allowed' : 'pointer'}">
+          ${isCur ? `<circle cx="${pos.x}" cy="${pos.y}" r="25" class="map-node-pulse" />` : ''}
+          <circle cx="${pos.x}" cy="${pos.y}" r="${isCur ? 18 : 14}" class="map-node-circle" />
+          <text x="${pos.x}" y="${pos.y + 4}" text-anchor="middle" class="map-node-lvl">${
+        isCur ? '★' : loc.minLevel
+      }</text>
+          <text x="${pos.x}" y="${pos.y + 33}" text-anchor="middle" class="map-node-label">${pos.short}</text>
+        </g>
+      `;
+    }).join('');
+
     const cardsHtml = ART.LOCATIONS.map((loc) => {
       const isCur = state.world.currentLocation === loc.id;
+      const isAdj = adjacentSet.has(loc.id);
       const locked = state.hero.level < loc.minLevel;
       return `
         <div class="atlas-region-card ${isCur ? 'current' : ''} ${
@@ -752,11 +812,12 @@ window.GDL_MAIN_VIEWS = (function () {
       }">
           <div class="atlas-card-thumb" style="background-image:url('${loc.img}')">
             <span class="atlas-danger-tag">${loc.dangerLabel}</span>
+            ${isAdj && !locked ? '<span class="atlas-adj-badge">🧭 Ruta Directa</span>' : ''}
           </div>
           <div class="atlas-card-content">
             <h4>${loc.name}</h4>
             <p>${loc.subtitle}</p>
-            <button class="btn-asteria ${isCur ? 'gold' : ''}" data-atlas-go="${loc.id}" ${
+            <button class="btn-asteria ${isCur || isAdj ? 'gold' : ''}" data-atlas-go="${loc.id}" ${
         locked ? 'disabled' : ''
       }>
               ${
@@ -764,7 +825,9 @@ window.GDL_MAIN_VIEWS = (function () {
                   ? '📍 Ubicación Actual'
                   : locked
                   ? `🔒 Requiere Nivel ${loc.minLevel}`
-                  : '🧭 Viajar a Región'
+                  : isAdj
+                  ? '🧭 Transición Directa'
+                  : '🗺️ Viajar a Región'
               }
             </button>
           </div>
@@ -775,9 +838,29 @@ window.GDL_MAIN_VIEWS = (function () {
     container.innerHTML = `
       <div class="atlas-view-wrapper">
         <div class="box-header-ornate">
-          <span>🗺️ Atlas Imperial de Asteria — Las 7 Regiones y Estancias Finales</span>
-          <span>Nivel de Héroe: ${state.hero.level}</span>
+          <span>🗺️ Mapa Interactivo de Zonas de Asteria — Navegación por Rutas Conectadas</span>
+          <span>Ubicación: ${curLoc.name} • Nivel ${state.hero.level}</span>
         </div>
+
+        <div class="asteria-interactive-map-box">
+          <svg viewBox="0 0 900 295" class="asteria-world-svg" role="img" aria-label="Mapa conectado de las 7 zonas de Asteria">
+            <defs>
+              <radialGradient id="mapBgGrad" cx="50%" cy="50%" r="60%">
+                <stop offset="0%" stop-color="#231c13" />
+                <stop offset="100%" stop-color="#0b0907" />
+              </radialGradient>
+            </defs>
+            <rect width="900" height="295" fill="url(#mapBgGrad)" />
+            <g class="map-routes-layer">${edgesSvg.join('')}</g>
+            <g class="map-nodes-layer">${nodesSvg}</g>
+          </svg>
+          <div class="map-legend-strip">
+            <span><i class="leg-dot cur"></i> Ubicación Actual</span>
+            <span><i class="leg-dot adj"></i> Zona Adyacente (Transición Directa)</span>
+            <span><i class="leg-dot lock"></i> Nivel Insuficiente</span>
+          </div>
+        </div>
+
         <div class="atlas-cards-grid">
           ${cardsHtml}
         </div>
@@ -791,10 +874,85 @@ window.GDL_MAIN_VIEWS = (function () {
     });
   }
 
+  /* ------------------------------------------------------------------------
+     5. DEDICATED RIGHT ASTERIA SIDEBAR (Переходы + Персонажи в локации)
+     ------------------------------------------------------------------------ */
+  function renderZoneNavigationSidebar(state, actions) {
+    const curLocEl = document.getElementById('asteria-sidebar-current-loc');
+    const transEl = document.getElementById('asteria-sidebar-transitions');
+    const warriorsEl = document.getElementById('asteria-sidebar-warriors');
+    const countEl = document.getElementById('asteria-sidebar-warriors-count');
+    if (!transEl || !warriorsEl) return;
+
+    const loc = ART.LOCATIONS.find((l) => l.id === state.world.currentLocation) || ART.LOCATIONS[0];
+    if (curLocEl) {
+      curLocEl.innerHTML = `<span class="cur-loc-pin">📍</span> <strong>${loc.name}</strong>`;
+    }
+
+    const transitionsHtml = (loc.connectedTo || [])
+      .map((destId) => {
+        const dest = ART.LOCATIONS.find((l) => l.id === destId);
+        if (!dest) return '';
+        const locked = state.hero.level < dest.minLevel;
+        return `
+          <button class="sidebar-trans-btn ${locked ? 'locked' : ''} ${
+          dest.isEndgameEstancia ? 'endgame' : ''
+        }" data-sidebar-travel="${dest.id}" title="${dest.subtitle}">
+            <span class="trans-arrow">${locked ? '🔒' : '➤'}</span>
+            <div class="trans-text">
+              <span class="trans-name">${dest.name}</span>
+              <small class="trans-lvl">Nivel ${dest.minLevel}+</small>
+            </div>
+          </button>
+        `;
+      })
+      .join('');
+
+    transEl.innerHTML = transitionsHtml;
+    transEl.querySelectorAll('[data-sidebar-travel]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        actions.travelTo(btn.getAttribute('data-sidebar-travel'));
+      });
+    });
+
+    const locIdx = Math.max(0, ART.LOCATIONS.findIndex((l) => l.id === loc.id));
+    const zoneWarriors = (ART.AI_WARRIORS || []).filter((_, i) => i % ART.LOCATIONS.length === locIdx);
+    if (countEl) countEl.textContent = String(zoneWarriors.length);
+
+    warriorsEl.innerHTML = zoneWarriors
+      .map(
+        (w) => `
+        <div class="sidebar-warrior-row">
+          <div class="sw-info">
+            <span class="sw-name">${w.faction === 'khair' ? '🔥' : '☀️'} ${w.name}</span>
+            <small class="sw-meta">Nv.${w.level} • ${w.clan}</small>
+          </div>
+          <div class="sw-actions">
+            <button class="sw-icon-btn" data-sw-inspect="${w.id}" title="Ver Perfil">👤</button>
+            <button class="sw-icon-btn crimson" data-sw-pvp="${w.id}" title="Retar PvP">⚔️</button>
+            <button class="sw-icon-btn" data-sw-gift="${w.id}" title="Enviar Regalo (50c)">🎁</button>
+          </div>
+        </div>
+      `
+      )
+      .join('');
+
+    warriorsEl.querySelectorAll('[data-sw-inspect]').forEach((btn) => {
+      btn.addEventListener('click', () => actions.inspectAiWarrior(btn.getAttribute('data-sw-inspect')));
+    });
+    warriorsEl.querySelectorAll('[data-sw-pvp]').forEach((btn) => {
+      btn.addEventListener('click', () => actions.startPvpCombat(btn.getAttribute('data-sw-pvp')));
+    });
+    warriorsEl.querySelectorAll('[data-sw-gift]').forEach((btn) => {
+      btn.addEventListener('click', () => actions.sendGiftToWarrior(btn.getAttribute('data-sw-gift')));
+    });
+  }
+
   return {
     renderLocationView,
     renderHuntingView,
     renderCombatView,
-    renderAtlasView
+    renderAtlasView,
+    renderZoneNavigationSidebar
   };
 })();

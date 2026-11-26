@@ -698,6 +698,7 @@ window.GDL_APP = (function () {
     },
 
     switchCenterView(viewName) {
+      state.ui.activeModule = 'world';
       state.ui.centerView = viewName;
       state.ui.activeView = viewName;
       if (viewName !== 'combat' && window.GDL_COMBAT_CANVAS && window.GDL_COMBAT_CANVAS.stopBattleLoop) {
@@ -830,6 +831,7 @@ window.GDL_APP = (function () {
         CHAT.addSystemMessage(`Necesitas Nivel ${dest.minLevel} para viajar a ${dest.name}.`);
         return;
       }
+      state.ui.activeModule = 'world';
       combatState = null;
       if (window.GDL_COMBAT_CANVAS && window.GDL_COMBAT_CANVAS.stopBattleLoop) {
         window.GDL_COMBAT_CANVAS.stopBattleLoop();
@@ -1198,6 +1200,7 @@ window.GDL_APP = (function () {
     startCombat(creatureId) {
       const cr = ART.CREATURES.find((c) => c.id === creatureId);
       if (!cr) return false;
+      state.ui.activeModule = 'world';
       recalcVitals(false);
       if (state.hero.hp < 25) state.hero.hp = Math.round(state.hero.maxHp * 0.5);
 
@@ -1248,6 +1251,7 @@ window.GDL_APP = (function () {
     startPvpCombat(aiId) {
       const w = ART.AI_WARRIORS.find((x) => x.id === aiId);
       if (!w) return false;
+      state.ui.activeModule = 'world';
       recalcVitals(false);
       if (state.hero.hp < 40) state.hero.hp = state.hero.maxHp;
 
@@ -2799,15 +2803,31 @@ window.GDL_APP = (function () {
   /* ------------------------------------------------------------------------
      MAIN RENDER ORCHESTRATOR
      ------------------------------------------------------------------------ */
+  function syncModularStage() {
+    const activeMod = state.ui.activeModule || 'world';
+    const paneWorld = document.getElementById('module-pane-world');
+    const paneHero = document.getElementById('module-pane-hero');
+    const paneBag = document.getElementById('module-pane-bag');
+
+    if (paneWorld) paneWorld.classList.toggle('module-hidden', activeMod !== 'world');
+    if (paneHero) paneHero.classList.toggle('module-hidden', activeMod !== 'hero');
+    if (paneBag) paneBag.classList.toggle('module-hidden', activeMod !== 'bag' && activeMod !== 'quests');
+
+    document.querySelectorAll('[data-nav-view]').forEach((btn) => {
+      const isWorldView = activeMod === 'world' && btn.getAttribute('data-nav-view') === state.ui.centerView;
+      btn.classList.toggle('active', isWorldView);
+    });
+
+    document.querySelectorAll('[data-module-tab]').forEach((btn) => {
+      btn.classList.toggle('active', btn.getAttribute('data-module-tab') === activeMod);
+    });
+  }
+
   function renderAll() {
     recalcVitals(false);
     const derived = computeDerivedStats();
     UI.renderTopHeader(state);
     UI.renderHeroLeftPanel(state, derived, actions);
-
-    document.querySelectorAll('[data-nav-view]').forEach((btn) => {
-      btn.classList.toggle('active', btn.getAttribute('data-nav-view') === state.ui.centerView);
-    });
 
     const stageEl = document.getElementById('center-stage-container');
     if (stageEl) {
@@ -2824,7 +2844,12 @@ window.GDL_APP = (function () {
       }
     }
 
+    if (VIEWS.renderZoneNavigationSidebar) {
+      VIEWS.renderZoneNavigationSidebar(state, actions);
+    }
+
     UI.renderRightDock(state, actions);
+    syncModularStage();
   }
 
   /* ------------------------------------------------------------------------
@@ -2836,6 +2861,7 @@ window.GDL_APP = (function () {
     document.querySelectorAll('[data-nav-view]').forEach((btn) => {
       btn.addEventListener('click', () => {
         const v = btn.getAttribute('data-nav-view');
+        state.ui.activeModule = 'world';
         if (v === 'combat' && !combatState) {
           const loc = ART.LOCATIONS.find((l) => l.id === state.world.currentLocation) || ART.LOCATIONS[0];
           const firstCr = ART.CREATURES.find((c) => c.loc === loc.id);
@@ -2847,6 +2873,25 @@ window.GDL_APP = (function () {
         actions.switchCenterView(v);
       });
     });
+
+    document.querySelectorAll('[data-module-tab]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const mod = btn.getAttribute('data-module-tab');
+        state.ui.activeModule = mod;
+        if (mod === 'bag') state.ui.rightTab = 'bag';
+        if (mod === 'quests') state.ui.rightTab = 'quests';
+        UI.renderRightDock(state, actions);
+        syncModularStage();
+      });
+    });
+
+    const sidebarMapBtn = document.getElementById('btn-sidebar-open-map');
+    if (sidebarMapBtn) {
+      sidebarMapBtn.addEventListener('click', () => {
+        state.ui.activeModule = 'world';
+        actions.switchCenterView('atlas');
+      });
+    }
 
     document.querySelectorAll('[data-top-modal]').forEach((btn) => {
       btn.addEventListener('click', () => {
