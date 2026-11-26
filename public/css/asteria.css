@@ -1591,6 +1591,306 @@ html, body {
   padding: 8px;
 }
 
+/* ==========================================================================
+   ASTERIA COMPLETE HUD, VALOR BAR, 33/66% XP TICKS, 12-SLOT RAGDOLL & MODALS
+   ========================================================================== */
+
+.hud-vitals-row {
+  max-width: 680px;
+}
+
+.asteria-bar-fill.valor {
+  background: linear-gradient(90deg, #8a3806 0%, #d96b14 60%, #ff9d3b 100%);
+}
+
+.xp-track-milestones {
+  position: relative;
+}
+
+.xp-tick-marker {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: rgba(244, 208, 104, 0.85);
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.9);
+  z-index: 3;
+  pointer-events: none;
+}
+
+.xp-tick-marker.tick-33 {
+  left: 33.33%;
+}
+
+.xp-tick-marker.tick-66 {
+  left: 66.66%;
+}
+
+.currency-multi-strip {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.currency-pouch-pill.sm-curr {
+  padding: 4px 7px;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.currency-pouch-pill.sm-curr:hover {
+  border-color: var(--gold-bright);
+}
+
+.hud-aura-badges {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.aura-pill-btn {
+  padding: 4px 7px;
+  background: #14100c;
+  border: 1px solid var(--bronze-border);
+  color: var(--text-muted);
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.aura-pill-btn:hover {
+  border-color: var(--gold-bright);
+  color: var(--gold-bright);
+}
+
+.aura-pill-btn.active {
+  background: rgba(212, 168, 67, 0.22);
+  border-color: var(--gold-bright);
+  color: var(--gold-bright);
+}
+
+.aura-pill-btn.injury-pill {
+  background: rgba(158, 31, 23, 0.45);
+  border-color: var(--crimson-bright);
+  color: #ffb2ab;
+}
+
+.aura-pill-btn.hidden {
+  display: none;
+}
+
+/* Faction & Combat Style Switcher in Left Panel */
+.faction-style-switcher {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 7px;
+  padding: 6px;
+  background: var(--bg-input);
+  border: 1px solid var(--bronze-subtle);
+}
+
+.fs-row {
+  display: flex;
+  gap: 4px;
+}
+
+.fs-btn {
+  flex: 1;
+  padding: 3px 5px;
+  background: #14100c;
+  border: 1px solid var(--bronze-border);
+  color: var(--text-muted);
+  font-family: var(--font-display);
+  font-size: 9px;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fs-btn.active {
+  border-color: var(--gold-bright);
+  color: var(--gold-bright);
+  background: rgba(212, 168, 67, 0.18);
+}
+
+/* 12-Slot Compact Ragdoll */
+.ragdoll-col {
+  gap: 4px;
+}
+
+.ragdoll-slot {
+  height: 41px;
+  position: relative;
+}
+
+.ragdoll-slot .rg-icon {
+  font-size: 16px;
+}
+
+.ragdoll-slot .rg-label {
+  font-size: 7.5px;
+  margin-top: 1px;
+}
+
+.rg-dur-bar {
+  position: absolute;
+  bottom: 1px;
+  left: 3px;
+  right: 3px;
+  height: 2px;
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.rg-dur-fill {
+  height: 100%;
+  background: var(--xp-bright);
+}
+
+.rg-rune-dot {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  font-size: 9px;
+  line-height: 1;
+}
+
+.avatar-canvas-frame {
+  height: 266px;
+}
+
+/* 14-Button Center Navigation Grid */
+.asteria-14-nav-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  width: 100%;
+}
+
+.asteria-14-nav-grid .btn-asteria.sm {
+  padding: 4px 7px;
+  font-size: 9.5px;
+}
+
+/* 6-Category Backpack Filter Tabs */
+.bag-filter-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3px;
+  margin-bottom: 6px;
+}
+
+.bag-cat-btn {
+  padding: 4px 5px;
+  background: var(--bg-input);
+  border: 1px solid var(--bronze-border);
+  color: var(--text-muted);
+  font-family: var(--font-display);
+  font-size: 9px;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: center;
+}
+
+.bag-cat-btn.active {
+  border-color: var(--gold-bright);
+  color: var(--gold-bright);
+  background: rgba(212, 168, 67, 0.18);
+}
+
+.bag-toolbar-strip {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 6px;
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.inv-grid-expandable {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 5px;
+  margin-bottom: 10px;
+  max-height: 245px;
+  overflow-y: auto;
+  padding-right: 2px;
+}
+
+/* Combat Stances, Spells, 6 Super-Blows & 6-Slot Belt */
+.sb-recipes-row.six-grid {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.superblow-chip.ready-glow {
+  border-color: var(--gold-bright);
+  background: rgba(212, 168, 67, 0.22);
+  box-shadow: 0 0 10px rgba(244, 208, 104, 0.45);
+}
+
+.combat-tactical-subbar {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: 8px;
+}
+
+.stance-pills-row,
+.spells-pills-row {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.combat-potions-grid.belt-6 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+/* Hunting Filter Pills & Hover Tooltip */
+.hunting-controls-strip {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 6px 10px;
+  background: var(--bg-input);
+  border: 1px solid var(--bronze-border);
+}
+
+.hunting-canvas-frame {
+  position: relative;
+}
+
+.hunting-tooltip-box {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  background: rgba(10, 8, 6, 0.92);
+  border: 1px solid var(--gold-bright);
+  padding: 6px 10px;
+  font-size: 11px;
+  color: var(--text-main);
+  pointer-events: none;
+  z-index: 5;
+  max-width: 360px;
+}
+
+/* Modal Sub-Tabs */
+.modal-subtabs-bar {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--bronze-border);
+  padding-bottom: 8px;
+}
+
 @media (max-width: 1024px) {
   html, body {
     overflow-y: auto;
@@ -1603,6 +1903,7 @@ html, body {
   .asteria-workspace,
   .location-lower-grid,
   .tactical-zones-grid,
+  .combat-tactical-subbar,
   .asteria-bottom-dock,
   .prof-grid-2col {
     grid-template-columns: 1fr;

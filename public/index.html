@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Guerreros de la LUZ — MMORPG Táctico de Fantasía Épica en Español</title>
-  <meta name="description" content="Guerreros de la LUZ: MMORPG web en español inspirado en Asteria y Legend: Legacy of the Dragons. Explora las 7 regiones pintadas al óleo en HD, domina el Modo Caza, los Super-Golpes, el Cubo Éltico, Ignifer y las Estancias Finales." />
+  <title>Guerreros de la LUZ — MMORPG Táctico de Fantasía Épica en Español (Crónicas de Asteria)</title>
+  <meta name="description" content="Guerreros de la LUZ: MMORPG web en español inspirado en Asteria (asteriagame.com) y Legend: Legacy of the Dragons. Facciones Ogriy y Khair, 3 Estilos de Combate, 12 Ranuras con Runas, Modo Caza con Radar, Campos de Batalla, La Gruta (ГРОТ), Hacienda, Academia de Discípulos y Barajas." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Cinzel:wght@600;700;800&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
@@ -13,14 +13,14 @@
 <body>
   <div class="asteria-shell">
     <!-- ====================================================================
-         TOP HUD BAR
+         TOP HUD BAR (VITALS, 33%/66% XP TICKS, ORANGE VALOR BAR, CURRENCIES & AURAS)
          ==================================================================== -->
     <header class="asteria-topbar">
       <div class="brand-crest-group">
-        <div class="solar-emblem-diamond"><span>☀️</span></div>
+        <div class="solar-emblem-diamond" id="hud-faction-crest" title="Facción de Faeo"><span>☀️</span></div>
         <div class="brand-titles-col">
           <h1>Guerreros de la LUZ</h1>
-          <small>Crónicas de Asteria • Edición Completa HD</small>
+          <small id="hud-faction-subtitle">Crónicas de Asteria • Faeo HD</small>
         </div>
       </div>
 
@@ -43,20 +43,60 @@
 
         <div class="hud-vital-item">
           <div class="hud-vital-head">
-            <span>⭐ Experiencia</span>
+            <span>⭐ Experiencia (33/66%)</span>
             <strong id="hud-xp-text">0 / 100</strong>
           </div>
-          <div class="asteria-bar-track"><div class="asteria-bar-fill xp" id="hud-xp-bar" style="width:0%"></div></div>
+          <div class="asteria-bar-track xp-track-milestones" title="Recompensas automáticas de oro al 33.33% y 66.66% de nivel">
+            <div class="asteria-bar-fill xp" id="hud-xp-bar" style="width:0%"></div>
+            <span class="xp-tick-marker tick-33" title="Hito 33.33% XP"></span>
+            <span class="xp-tick-marker tick-66" title="Hito 66.66% XP"></span>
+          </div>
+        </div>
+
+        <div class="hud-vital-item">
+          <div class="hud-vital-head">
+            <span>⚔️ Valor (<span id="hud-valor-rank">Recluta</span>)</span>
+            <strong id="hud-valor-text">0 / 250</strong>
+          </div>
+          <div class="asteria-bar-track" title="Barra de Valor (Доблесть) y Rango Militar de Faeo">
+            <div class="asteria-bar-fill valor" id="hud-valor-bar" style="width:0%"></div>
+          </div>
         </div>
       </div>
 
       <div class="hud-right-cluster">
-        <div class="currency-pouch-pill" title="Oro (o), Plata (p) y Cobre (c)">
-          <span>🪙</span>
-          <span id="hud-currency-box">6p 50c</span>
+        <div class="currency-multi-strip">
+          <div class="currency-pouch-pill" title="Oro (o), Plata (p) y Cobre (c)">
+            <span>🪙</span>
+            <span id="hud-currency-box">6p 50c</span>
+          </div>
+          <div class="currency-pouch-pill sm-curr" title="Diamantes (Бриллианты)" data-top-modal="fair">
+            <span>💎</span>
+            <span id="hud-diamonds-box">5</span>
+          </div>
+          <div class="currency-pouch-pill sm-curr" title="Rubíes (Рубины)" data-top-modal="fair">
+            <span>♦️</span>
+            <span id="hud-rubies-box">2</span>
+          </div>
+          <div class="currency-pouch-pill sm-curr" title="Monedas Trofeo de Campos de Batalla (Трофейные монеты)" data-top-modal="battlefields">
+            <span>🏅</span>
+            <span id="hud-trophies-box">0</span>
+          </div>
+          <div class="currency-pouch-pill sm-curr" title="Fichas por Tiempo Online (Товары за онлайн)" data-top-modal="fair">
+            <span>⏳</span>
+            <span id="hud-online-box">3</span>
+          </div>
         </div>
-        <button class="btn-asteria" id="btn-toggle-audio" title="Activar/Silenciar Sonido WebAudio">🔊 Audio</button>
-        <button class="btn-asteria gold" data-top-modal="save" title="Guardar, Exportar o Importar Partida">💾 Partida</button>
+
+        <div class="hud-aura-badges">
+          <button class="aura-pill-btn" id="hud-faction-badge" title="Cambiar Facción (Ogriy / Khair)">☀️ Ogriy</button>
+          <button class="aura-pill-btn" id="hud-antixp-badge" title="Anillo de Anti-Experiencia (Антиопыт): Congela XP mientras farmeas Valor y Oro">💍 Антиопыт: OFF</button>
+          <button class="aura-pill-btn" id="hud-unbreakable-badge" title="Aura Inquebrantable (Неслом): Las armas y armaduras no pierden durabilidad">🛡️ Неслом</button>
+          <button class="aura-pill-btn injury-pill hidden" id="hud-injury-badge" title="Haz clic para curar tu Herida de Guerra inmediatamente">🩸 Herida (Curar)</button>
+        </div>
+
+        <button class="btn-asteria sm" id="btn-toggle-audio" title="Activar/Silenciar Sonido WebAudio">🔊 Audio</button>
+        <button class="btn-asteria sm gold" data-top-modal="save" title="Guardar, Exportar o Importar Partida">💾 Partida</button>
       </div>
     </header>
 
@@ -64,11 +104,11 @@
          3-COLUMN MIDDLE WORKSPACE
          ==================================================================== -->
     <main class="asteria-workspace">
-      <!-- LEFT PANEL: HERO RAGDOLL, DYNAMIC AVATAR CANVAS & STATS -->
+      <!-- LEFT PANEL: HERO 12-SLOT RAGDOLL, FACTION/STYLE, AVATAR CANVAS & STATS -->
       <section class="asteria-panel" aria-label="Perfil del Guerrero">
         <div class="panel-ornate-header">
-          <span>⚜️ Armadura y Perfil</span>
-          <span>Guerrero Solar</span>
+          <span>⚜️ Armadura (12 Ranuras)</span>
+          <span id="hero-style-header-label">Guerrero Solar</span>
         </div>
         <div class="panel-scroll-body">
           <div class="hero-id-banner">
@@ -79,6 +119,10 @@
             <div class="hero-lvl-medal" id="hero-level-badge">1</div>
           </div>
 
+          <!-- Faction & Combat Style Switcher Bar -->
+          <div class="faction-style-switcher" id="hero-faction-style-bar"></div>
+
+          <!-- 12-Slot Paperdoll Grid (6 Left, Avatar Canvas Center, 6 Right) -->
           <div class="ragdoll-grid-stage">
             <div class="ragdoll-col" id="ragdoll-left-slots"></div>
             <div class="avatar-canvas-frame">
@@ -97,28 +141,33 @@
         </div>
       </section>
 
-      <!-- CENTER STAGE: HD PANORAMA, HUNTING MODE, 3-ZONE COMBAT & ATLAS -->
+      <!-- CENTER STAGE: 14-BUTTON ASTERIA NAVIGATION BAR + MAIN VIEWPORT -->
       <section class="asteria-panel" aria-label="Escenario Central">
-        <nav class="center-stage-nav">
-          <div style="display:flex;gap:5px;flex-wrap:wrap">
-            <button class="btn-asteria active" data-nav-view="location">🏰 Estancia HD</button>
-            <button class="btn-asteria" data-nav-view="hunting">🏹 Modo Caza</button>
-            <button class="btn-asteria" data-nav-view="combat">⚔️ Combate Táctico</button>
-            <button class="btn-asteria" data-nav-view="atlas">🗺️ Atlas (7 Regiones)</button>
-          </div>
-          <div style="display:flex;gap:5px;flex-wrap:wrap">
-            <button class="btn-asteria sm gold" data-top-modal="cube">🧊 Cubo Éltico</button>
-            <button class="btn-asteria sm gold" data-top-modal="mounts">🔥 Ignifer</button>
-            <button class="btn-asteria sm crimson" data-top-modal="arena">🏟️ Arena PvP (16 IA)</button>
+        <nav class="center-stage-nav" aria-label="Navegación Principal de Asteria">
+          <div class="asteria-14-nav-grid">
+            <button class="btn-asteria sm active" data-nav-view="location" title="Estancia Actual (Локация)">🏰 Estancia</button>
+            <button class="btn-asteria sm" data-nav-view="hunting" title="Modo Caza con Radar y Filtros (Охота)">🏹 Modo Caza</button>
+            <button class="btn-asteria sm" data-nav-view="combat" title="Combate Táctico de 3 Zonas (Бой)">⚔️ Combate</button>
+            <button class="btn-asteria sm crimson" data-top-modal="battlefields" title="Campos de Batalla y Valor (Поля битв)">🚩 Campos de Batalla</button>
+            <button class="btn-asteria sm gold" data-top-modal="instances" title="La Gruta (ГРОТ) e Instancias PvE (Инстансы)">🕳️ Gruta e Instancias</button>
+            <button class="btn-asteria sm" data-top-modal="estate" title="Hacienda Personal y Edificios (Поместье)">🏛️ Hacienda</button>
+            <button class="btn-asteria sm" data-top-modal="reputations" title="10+ Reputaciones, Arkona y Tahúr (Репутации)">🎖️ Reputaciones</button>
+            <button class="btn-asteria sm gold" data-top-modal="mounts" title="Academia de Discípulos, Ignifer y Mascotas Rojas (Ученики/Питомцы)">🦅 Academia y Mascotas</button>
+            <button class="btn-asteria sm" data-top-modal="decks" title="Barajas de Cartas Coleccionables (Колоды карт)">🃏 Barajas</button>
+            <button class="btn-asteria sm gold" data-top-modal="fair" title="Feria de las Maravillas, Rueda de la Fortuna y Hazañas (Ярмарка/Колесо)">🎡 Feria y Rueda</button>
+            <button class="btn-asteria sm" data-top-modal="bank" title="Banco Imperial y Casa de Subastas (Банк/Аукцион)">🏦 Banco y Subasta</button>
+            <button class="btn-asteria sm" data-top-modal="profile" title="Perfil de Personaje, Regalos y Promocódigos (Анкета)">👤 Perfil y Promos</button>
+            <button class="btn-asteria sm" data-top-modal="library" title="Biblioteca de Faeo y Acertijos de Balagur (Библиотека)">📚 Biblioteca</button>
+            <button class="btn-asteria sm" data-nav-view="atlas" title="Atlas Cartográfico de las 7 Regiones (Карта)">🗺️ Atlas</button>
           </div>
         </nav>
         <div class="center-stage-body" id="center-stage-container"></div>
       </section>
 
-      <!-- RIGHT PANEL: 20-SLOT INVENTORY, QUESTS & SPECIAL SYSTEMS -->
+      <!-- RIGHT PANEL: 6-CATEGORY EXPANDABLE BACKPACK, QUESTS & SYSTEMS -->
       <section class="asteria-panel" aria-label="Mochila y Sistemas">
         <nav class="right-dock-tabs">
-          <button class="dock-tab-btn active" data-right-dock-tab="bag">🎒 Mochila (70+)</button>
+          <button class="dock-tab-btn active" data-right-dock-tab="bag">🎒 Mochila (85+)</button>
           <button class="dock-tab-btn" data-right-dock-tab="quests">📜 Misiones</button>
           <button class="dock-tab-btn" data-right-dock-tab="specials">✨ Sistemas</button>
         </nav>
@@ -153,11 +202,13 @@
           <span>⚡ Santuarios Rápidos</span>
           <span id="persist-status-indicator" style="color:var(--xp-bright);font-size:10px">Persistente</span>
         </div>
-        <div class="panel-scroll-body" style="display:grid;grid-template-columns:1fr 1fr;gap:5px;align-content:start">
-          <button class="btn-asteria sm" data-top-modal="professions">⚒️ 6 Profesiones</button>
+        <div class="panel-scroll-body" style="display:grid;grid-template-columns:1fr 1fr;gap:4px;align-content:start">
+          <button class="btn-asteria sm" data-top-modal="professions">⚒️ 9 Profesiones</button>
+          <button class="btn-asteria sm" data-top-modal="cube">🧊 Cubo Éltico</button>
           <button class="btn-asteria sm" data-top-modal="medals">🎖️ Medallas</button>
           <button class="btn-asteria sm" data-top-modal="mirror">🪞 Espejo Mágico</button>
-          <button class="btn-asteria sm" data-top-modal="tavern">🎲 Dados Taberna</button>
+          <button class="btn-asteria sm" data-top-modal="tavern">🎲 Taberna & Cartas</button>
+          <button class="btn-asteria sm crimson" data-top-modal="arena">🏟️ Arena & Clanes</button>
           <button class="btn-asteria sm gold" data-top-modal="quests" style="grid-column:1 / -1">📜 Ver Códice de Misiones</button>
         </div>
       </section>
