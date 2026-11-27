@@ -471,16 +471,24 @@ window.GDL_MAIN_VIEWS = (function () {
     // Fury percentage rises with combo steps & turn momentum
     const furyPct = Math.min(100, chain.length * 34 + (combatState.readySuperBlow ? 32 : 12));
 
+    const heroPortraitSrc =
+      h.faction === 'khair' ? 'assets/combat/hero_magmar.jpg' : 'assets/combat/hero_paladin.jpg';
+    const enemyPortraitSrc =
+      window.GDL_COMBAT_CANVAS && window.GDL_COMBAT_CANVAS.getCreaturePortraitPath
+        ? window.GDL_COMBAT_CANVAS.getCreaturePortraitPath(en)
+        : 'assets/combat/creature_beast.jpg';
+
     const zones = [
-      { id: 'head', label: 'Cabeza y Yelmo', icon: '🪖' },
-      { id: 'torso', label: 'Torso y Coraza', icon: '🥋' },
-      { id: 'legs', label: 'Piernas y Guardia Baja', icon: '🥾' }
+      { id: 'head', label: 'Cabeza y Yelmo', short: 'CABEZA', icon: '🪖' },
+      { id: 'torso', label: 'Torso y Coraza', short: 'TORSO', icon: '🥋' },
+      { id: 'legs', label: 'Piernas y Guardia Baja', short: 'PIERNAS', icon: '🥾' }
     ];
 
     const comboHistoryIcons = chain
       .map((z) => (z === 'head' ? '🪖 Cabeza' : z === 'torso' ? '🥋 Torso' : '🥾 Piernas'))
       .join(' → ');
 
+    // Interactive DWAR / BG3 Super-Blow Grimoire Cards (Clicking a card queues its next zone step!)
     const superBlowsHtml = ART.SUPER_BLOWS.map((sb) => {
       let matchedSteps = 0;
       if (chain.length === 2 && sb.sequence[0] === chain[0] && sb.sequence[1] === chain[1]) {
@@ -492,41 +500,87 @@ window.GDL_MAIN_VIEWS = (function () {
       }
       const isReady =
         matchedSteps === 2 || (combatState.readySuperBlow && combatState.readySuperBlow.id === sb.id);
+      const nextStepZone = sb.sequence[Math.min(2, matchedSteps)];
+      const nextStepLabel = sb.seqLabels[Math.min(2, matchedSteps)];
+      const multPct = Math.round((sb.mult || 1.5) * 100);
+
+      const runesPips = sb.sequence
+        .map((z, idx) => {
+          const lit = idx < matchedSteps;
+          const isNext = idx === matchedSteps;
+          const letter = z === 'head' ? 'C' : z === 'torso' ? 'T' : 'P';
+          return `<span class="sb-rune-pip ${lit ? 'lit' : ''} ${isNext ? 'next-step' : ''}" title="Paso ${
+            idx + 1
+          }: ${sb.seqLabels[idx]}">${letter}</span>`;
+        })
+        .join('<span class="sb-pip-arrow">▸</span>');
+
       return `
-        <div class="superblow-chip skeuo-runic-sb-chip ${isReady ? 'ready-glow' : ''}" title="${sb.desc}">
-          <span>${sb.icon} <strong>${sb.name}</strong> <small style="color:var(--gold-bright)">(${matchedSteps}/3)</small></span>
-          <span class="sb-seq">${sb.seqLabels.join(' → ')} ${
-        isReady ? '• ⚡ ¡SIGUIENTE: ' + sb.seqLabels[2].toUpperCase() + '!' : ''
-      }</span>
+        <div class="superblow-chip skeuo-runic-sb-chip ${isReady ? 'ready-glow' : ''} ${
+        matchedSteps === 1 ? 'partial-glow' : ''
+      }" data-prime-superblow="${sb.id}" data-next-zone="${nextStepZone}" title="${
+        sb.desc
+      } — Haz clic para apuntar automáticamente al siguiente paso (${nextStepLabel})">
+          <div class="sb-card-top">
+            <span class="sb-icon-medallion">${sb.icon}</span>
+            <div class="sb-title-col">
+              <strong>${sb.name}</strong>
+              <small style="color:var(--gold-bright)">(${matchedSteps}/3) • ${multPct}% Daño</small>
+            </div>
+            <div class="sb-pips-cluster">${runesPips}</div>
+          </div>
+          <div class="sb-seq">
+            <span>${sb.seqLabels.join(' → ')}</span>
+            <span class="sb-assist-cta">${
+              isReady
+                ? '⚡ ¡LISTO: GOLPEA ' + sb.seqLabels[2].toUpperCase() + '!'
+                : '🎯 Apuntar: ' + nextStepLabel
+            }</span>
+          </div>
         </div>
       `;
     }).join('');
 
-    // 3 Combat Stances with Red / Green / Gold Indicator Gems
+    // 3 Combat Stances with Red / Green / Gold Indicator Gems & Tactical Modifier Badges
     const curStance = combatState.stance || 'guardia_solar';
     const stanceGemMap = {
-      guardia_solar: 'gem-gold',
-      furia_dragon: 'gem-red',
-      velo_sombra: 'gem-green'
+      guardia_solar: { gem: 'gem-gold', tag: '+25% DEF / Bloqueo' },
+      furia_dragon: { gem: 'gem-red', tag: '+25% ATQ / +10% Crít' },
+      velo_sombra: { gem: 'gem-green', tag: '22% Esquiva / Sangrado' }
     };
     const stancesHtml = ART.COMBAT_STANCES.map((st) => {
-      const gemCls = stanceGemMap[st.id] || 'gem-gold';
+      const info = stanceGemMap[st.id] || { gem: 'gem-gold', tag: 'Equilibrado' };
       return `
         <button class="btn-asteria sm skeuo-stance-gem-btn ${curStance === st.id ? 'gold active' : ''}" data-combat-stance="${st.id}" title="${st.desc}">
-          <span class="stance-indicator-gem ${gemCls}"></span>
-          <span>${st.icon} ${st.name}</span>
+          <div class="stance-btn-main">
+            <span class="stance-indicator-gem ${info.gem}"></span>
+            <span>${st.icon} ${st.name}</span>
+          </div>
+          <small class="stance-mod-tag">${info.tag}</small>
         </button>
       `;
     }).join('');
 
-    // 4 Magic School Spells
-    const spellsHtml = ART.MAGIC_SPELLS.map((sp) => {
+    // 4 Magic School Spells (BG3 / Diablo II Grimoire Spell Slots)
+    const spellsHtml = ART.MAGIC_SPELLS.map((sp, idx) => {
       const canCast = h.mp >= sp.mpCost;
+      const effectTag =
+        sp.type === 'buff_heal'
+          ? `+${Math.round((sp.healPct || 0.25) * 100)}% HP / +${sp.buffDef} DEF`
+          : sp.type === 'lifesteal'
+          ? `${Math.round((sp.mult || 1.35) * 100)}% ATQ + Robo Vida`
+          : `${Math.round((sp.mult || 1.5) * 100)}% Daño Arcano`;
       return `
-        <button class="btn-asteria sm skeuo-wax-seal" data-cast-spell="${sp.id}" ${
+        <button class="btn-asteria sm skeuo-spell-grimoire-slot ${canCast ? 'spell-ready' : 'spell-oom'}" data-cast-spell="${sp.id}" ${
         !canCast ? 'disabled' : ''
-      } title="${sp.desc}">
-          ${sp.icon} ${sp.name.split(' ')[0]} (${sp.mpCost} MP)
+      } title="${sp.name} (${sp.school}): ${sp.desc}">
+          <span class="spell-hotkey-badge">F${idx + 1}</span>
+          <span class="spell-slot-icon">${sp.icon}</span>
+          <div class="spell-slot-meta">
+            <strong>${sp.name.split(' ')[0]}</strong>
+            <small class="spell-effect-tag">${effectTag}</small>
+          </div>
+          <span class="spell-mana-orb">${sp.mpCost} MP</span>
         </button>
       `;
     }).join('');
@@ -545,7 +599,7 @@ window.GDL_MAIN_VIEWS = (function () {
           ];
 
     const beltHtml = beltItems
-      .map((itemId) => {
+      .map((itemId, idx) => {
         const it = ART.ARTIFACTS[itemId] || ART.ARTIFACTS.elixir_vida_menor;
         const qty = actions.getItemQty(it.id);
         const flaskColor = it.healMp
@@ -557,6 +611,7 @@ window.GDL_MAIN_VIEWS = (function () {
           <button class="combat-potion-btn skeuo-crystal-flask ${flaskColor}" data-combat-potion="${it.id}" ${
           qty <= 0 ? 'disabled' : ''
         } title="${it.name}: ${it.desc}">
+            <span class="flask-hotkey">${idx + 1}</span>
             <span class="flask-glass-orb">${it.icon}</span>
             <span class="flask-label">${it.name.split(' ')[0]} (x${qty})</span>
           </button>
@@ -635,45 +690,57 @@ window.GDL_MAIN_VIEWS = (function () {
             </div>
           </aside>
 
-          <!-- CENTER ARENA FRAMED IN FORGED BRONZE WITH MONUMENTAL BOSS BAR -->
+          <!-- CENTER ARENA FRAMED IN FORGED BRONZE WITH MONUMENTAL BOSS BAR & VISIBLE HERO/CREATURE PORTRAITS -->
           <div class="dwar-combat-center-arena">
-            <!-- Monumental Boss / Enemy Health Bar -->
+            <!-- Monumental Boss / Enemy Health Bar with Painted Hero & Creature Medallions -->
             <div class="combat-vitals-header skeuo-monumental-boss-bar" data-testid="monumental-boss-bar">
-              <div class="combatant-vital-box hero-side" style="max-width:210px">
-                <div class="cv-top">
-                  <span class="cv-name">⚜️ ${h.name}</span>
-                  <span class="cv-nums">${h.hp}/${h.maxHp} HP</span>
+              <div class="combatant-vital-box hero-side combatant-with-portrait">
+                <img src="${heroPortraitSrc}" alt="${h.name}" class="combat-header-portrait hero-portrait" />
+                <div class="combatant-bars-col">
+                  <div class="cv-top">
+                    <span class="cv-name">⚜️ ${h.name}</span>
+                    <span class="cv-nums">${h.hp}/${h.maxHp} HP</span>
+                  </div>
+                  <div class="asteria-bar-track skeuo-beveled-track"><div class="asteria-bar-fill hp" style="width:${heroHpPct}%"></div></div>
                 </div>
-                <div class="asteria-bar-track skeuo-beveled-track"><div class="asteria-bar-fill hp" style="width:${heroHpPct}%"></div></div>
               </div>
 
-              <div class="combat-vs-badge skeuo-vs-medallion">⚔️ DUELO TÁCTICO</div>
+              <div class="combat-vs-badge skeuo-vs-medallion">⚔️ T${combatState.turn}</div>
 
-              <div class="combatant-vital-box enemy-side monumental-enemy-side">
-                <div class="cv-top">
-                  <span class="cv-name">${en.icon} ${en.name} (Nv.${en.level})</span>
-                  <span class="cv-nums">${en.currentHp} / ${en.maxHp} HP</span>
+              <div class="combatant-vital-box enemy-side monumental-enemy-side combatant-with-portrait">
+                <div class="combatant-bars-col">
+                  <div class="cv-top">
+                    <span class="cv-name">${en.icon} ${en.name} (Nv.${en.level})</span>
+                    <span class="cv-nums">${en.currentHp} / ${en.maxHp} HP</span>
+                  </div>
+                  <div class="asteria-bar-track skeuo-beveled-track monumental-hp-track">
+                    <div class="asteria-bar-fill hp" style="width:${enemyHpPct}%"></div>
+                  </div>
+                  <div class="enemy-combat-tags">
+                    <span>⚔️ ${en.atk} ATQ</span>
+                    <span>🛡️ ${en.def} DEF</span>
+                    ${combatState.enemyBleedTurns > 0 ? `<span class="debuff-tag">🩸 Sangrado (${combatState.enemyBleedTurns}t)</span>` : ''}
+                    ${combatState.enemyStunned ? `<span class="debuff-tag">💫 Aturdido</span>` : ''}
+                  </div>
                 </div>
-                <div class="asteria-bar-track skeuo-beveled-track monumental-hp-track">
-                  <div class="asteria-bar-fill hp" style="width:${enemyHpPct}%"></div>
-                </div>
+                <img src="${enemyPortraitSrc}" alt="${en.name}" class="combat-header-portrait enemy-portrait" />
               </div>
             </div>
 
-            <!-- Animated 60fps HTML5 Battle Canvas in Forged Bronze Frame -->
+            <!-- Animated 60fps HTML5 Battle Canvas in Forged Bronze Frame (Renders Hero & Creature Full Sprites) -->
             <div class="combat-canvas-box skeuo-bronze-arena-frame">
-              <canvas id="gdl-battle-canvas" width="840" height="230"></canvas>
+              <canvas id="gdl-battle-canvas" width="840" height="240"></canvas>
             </div>
 
-            <!-- Combat Stances (with Red/Green/Gold Gems) & Magic School Spells Bar -->
-            <div class="combat-tactical-subbar">
+            <!-- Redesigned Skills Deck: Postures + Grimoire Magic Spell Slots -->
+            <div class="combat-tactical-subbar skeuo-grimoire-skills-bar">
               <div class="zone-panel skeuo-obsidian-subpanel">
-                <div class="zone-panel-title">🛡️ Postura de Escudo (Gemas Rojo / Verde / Oro)</div>
+                <div class="zone-panel-title">🛡️ Posturas de Combate (Gemas Tácticas)</div>
                 <div class="stance-pills-row">${stancesHtml}</div>
               </div>
               <div class="zone-panel skeuo-obsidian-subpanel">
-                <div class="zone-panel-title">🪄 Escuela de Magia (Hechizos de Maná)</div>
-                <div class="spells-pills-row">${spellsHtml}</div>
+                <div class="zone-panel-title">📖 Grimorio de Hechizos Activos (${h.mp}/${h.maxMp} MP)</div>
+                <div class="spells-pills-row grimoire-4grid">${spellsHtml}</div>
               </div>
             </div>
           </div>
@@ -683,7 +750,7 @@ window.GDL_MAIN_VIEWS = (function () {
         <div class="tactical-zones-grid skeuo-dwar-tactical-console" data-testid="anatomical-tactical-console">
           <!-- ILLUMINATED 3-ZONE ANATOMICAL MANNEQUIN (CABEZA, TORSO, PIERNAS) -->
           <div class="zone-panel skeuo-mannequin-panel">
-            <div class="zone-panel-title">🎯 Maniquí Anatómico Iluminado (3 Zonas)</div>
+            <div class="zone-panel-title">🎯 Maniquí Anatómico (3 Zonas)</div>
             <div class="anatomical-mannequin-stage">
               <svg viewBox="0 0 120 175" class="anatomical-mannequin-svg" role="img" aria-label="Maniquí Anatómico Iluminado de 3 Zonas">
                 <!-- HEAD ZONE -->
@@ -707,7 +774,7 @@ window.GDL_MAIN_VIEWS = (function () {
               </svg>
               <div class="mannequin-legend">
                 <span class="m-leg atk">🔴 Ataque: <strong>${atkZ.toUpperCase()}</strong></span>
-                <span class="m-leg def">🔵 Escudo: <strong>${defZ.toUpperCase()}</strong></span>
+                <span class="m-leg def">🟢 Escudo: <strong>${defZ.toUpperCase()}</strong></span>
               </div>
             </div>
           </div>
@@ -722,7 +789,7 @@ window.GDL_MAIN_VIEWS = (function () {
                   combatState.attackZone === z.id ? 'active-atk' : ''
                 }" data-atk-zone="${z.id}">
                   <span><i class="stance-indicator-gem gem-red"></i> ⚔️ ${z.label}</span>
-                  <span>${combatState.attackZone === z.id ? 'OBJETIVO' : 'Elegir'}</span>
+                  <span>${combatState.attackZone === z.id ? 'OBJETIVO' : 'Apuntar'}</span>
                 </button>
               `
                 )
@@ -767,11 +834,11 @@ window.GDL_MAIN_VIEWS = (function () {
           </div>
         </div>
 
-        <!-- 6 RUNIC SUPER-BLOWS SEQUENCE TRACKER BAR -->
+        <!-- 6 RUNIC SUPER-BLOWS SEQUENCE TRACKER BAR (1-CLICK COMBO ASSIST) -->
         <div class="superblows-bar skeuo-runic-superblows-bar">
           <div class="sb-current-chain">
-            <span>⚡ Barra de Super-Golpes Rúnicos:</span>
-            <strong>${comboHistoryIcons || 'Encadena 3 zonas en el Maniquí Anatómico para desatar uno de los 6 Super-Golpes'}</strong>
+            <span>⚡ Códice de 6 Super-Golpes Rúnicos (Haz clic en cualquiera para apuntar su siguiente golpe):</span>
+            <strong>${comboHistoryIcons || '0/3 — Selecciona un Super-Golpe o una Zona de Ataque'}</strong>
           </div>
           <div class="sb-recipes-row six-grid">
             ${superBlowsHtml}
@@ -818,7 +885,18 @@ window.GDL_MAIN_VIEWS = (function () {
       });
     });
 
-    // Clicking on the 3-Zone Anatomical Mannequin cycles attack zone
+    // Clicking on a Super-Blow Card automatically queues its next required attack zone!
+    container.querySelectorAll('[data-prime-superblow]').forEach((card) => {
+      card.addEventListener('click', () => {
+        const nextZone = card.getAttribute('data-next-zone');
+        if (nextZone) {
+          combatState.attackZone = nextZone;
+          renderCombatView(container, state, combatState, actions);
+        }
+      });
+    });
+
+    // Clicking on the 3-Zone Anatomical Mannequin sets attack zone
     container.querySelectorAll('[data-mannequin-zone]').forEach((g) => {
       g.addEventListener('click', () => {
         combatState.attackZone = g.getAttribute('data-mannequin-zone');
