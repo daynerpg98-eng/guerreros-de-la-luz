@@ -3599,3 +3599,19 @@ html, body {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
   }
 }
+
+
+/* ==========================================================================
+   HIDE BOTTOM CHAT DOCK FOR NOW & GIVE 100% VERTICAL SPACE TO GAME STAGE
+   ========================================================================== */
+.asteria-shell,
+.asteria-modular-shell,
+.skeuo-master-shell {
+  grid-template-rows: auto 1fr !important;
+}
+
+#chat_TD,
+.asteria-bottom-dock,
+.asteria-full-chat-dock {
+  display: none !important;
+}
