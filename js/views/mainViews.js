@@ -1,13 +1,19 @@
 /* ==========================================================================
    GUERREROS DE LA LUZ — public/js/views/mainViews.js
-   Primary Center-Stage Views:
+   Primary Center-Stage Views (Dark-Epic Skeuomorphic Fantasy UI):
    1. Panorama HD View (Oil-painted location, interactive hotspots, NPCs,
       Creatures, Collapsible Transitions & Interactive Warriors in Zone widget)
    2. Modo Caza (Real-time HTML5 Hunting Canvas with Aggro Color Rings,
       Entity Filters, Auto-Aggro Toggle, Hover Tooltip, Tools & Radar Minimap)
-   3. Combate Táctico de 3 Zonas + 3 Posturas + 6 Super-Golpes + 4 Hechizos
-      de Magia + Invocación de Morok/Montura + Cinturón de 6 Ranuras +
-      Estadísticas de Combate (fight_info.php)
+   3. Vista de Combate Táctico Estilo DWAR / BG3:
+      - Columna izquierda con el Paperdoll completo del caballero (12 slots
+        con marcos de rareza brillantes alrededor del avatar pintado) y
+        barras de Vida, Maná y Furia.
+      - Arena central enmarcada en bronce con barra de jefe monumental.
+      - Consola táctica inferior con el Maniquí Anatómico Iluminado de 3 Zonas
+        (Cabeza, Torso, Piernas) y selectores de postura de escudo con gemas
+        indicadoras (Rojo/Verde/Oro), más la barra inferior de Super-Golpes
+        rúnicos y frascos de pociones en cristal.
    4. Atlas Cartográfico de las 7 Regiones y Estancias Finales
    ========================================================================== */
 
@@ -63,14 +69,14 @@ window.GDL_MAIN_VIEWS = (function () {
     const npcsCardsHtml = locNpcs
       .map(
         (npc) => `
-        <div class="gdl-entity-card npc-card" data-open-npc="${npc.id}">
+        <div class="gdl-entity-card skeuo-rel-card npc-card" data-open-npc="${npc.id}">
           <img src="${npc.portrait}" alt="${npc.name}" class="npc-thumb-img" />
           <div class="entity-card-body">
             <span class="entity-badge">${npc.badge}</span>
             <h4 class="entity-name">${npc.name}</h4>
             <p class="entity-sub">${npc.title}</p>
           </div>
-          <button class="btn-asteria sm gold">Hablar</button>
+          <button class="btn-asteria sm gold skeuo-wax-seal">Hablar</button>
         </div>
       `
       )
@@ -87,7 +93,7 @@ window.GDL_MAIN_VIEWS = (function () {
           ? '⚜️ ÉLITE'
           : `Nivel ${cr.level}`;
         return `
-          <div class="gdl-entity-card creature-card ${cr.isBoss ? 'boss-border' : ''}">
+          <div class="gdl-entity-card skeuo-rel-card creature-card ${cr.isBoss ? 'boss-border' : ''}">
             <div class="creature-icon-medal">${cr.icon}</div>
             <div class="entity-card-body">
               <span class="entity-badge ${cr.isBoss ? 'crimson' : ''}">${tag} ${
@@ -96,7 +102,7 @@ window.GDL_MAIN_VIEWS = (function () {
               <h4 class="entity-name">${cr.name}</h4>
               <p class="entity-sub">❤️ ${cr.hp} HP • ⚔️ ${cr.atk} ATQ • 🛡️ ${cr.def} DEF</p>
             </div>
-            <button class="btn-asteria sm crimson" data-attack-creature="${cr.id}">Atacar</button>
+            <button class="btn-asteria sm crimson skeuo-wax-seal" data-attack-creature="${cr.id}">Atacar</button>
           </div>
         `;
       })
@@ -108,7 +114,7 @@ window.GDL_MAIN_VIEWS = (function () {
         if (!dest) return '';
         const locked = state.hero.level < dest.minLevel;
         return `
-          <button class="travel-gate-btn ${locked ? 'locked' : ''} ${
+          <button class="travel-gate-btn skeuo-rel-card ${locked ? 'locked' : ''} ${
           dest.isEndgameEstancia ? 'endgame' : ''
         }" data-travel-loc="${dest.id}">
             <img src="${dest.img}" alt="${dest.name}" class="gate-mini-thumb" />
@@ -126,7 +132,7 @@ window.GDL_MAIN_VIEWS = (function () {
     const warriorsInZoneHtml = zoneWarriors
       .map(
         (w) => `
-        <div class="gdl-entity-card" style="cursor:default">
+        <div class="gdl-entity-card skeuo-rel-card" style="cursor:default">
           <div class="creature-icon-medal" style="width:34px;height:34px;font-size:16px">${
             w.faction === 'khair' ? '🌋' : '☀️'
           }</div>
@@ -136,9 +142,9 @@ window.GDL_MAIN_VIEWS = (function () {
             <p class="entity-sub">${w.title} • ⚔️ ${w.atk} ATQ • ❤️ ${w.hp} HP</p>
           </div>
           <div style="display:flex;gap:4px">
-            <button class="btn-asteria sm" data-inspect-warrior="${w.id}" title="Inspeccionar Perfil (user_info.php)">👤 Perfil</button>
-            <button class="btn-asteria sm gold" data-gift-warrior="${w.id}" title="Enviar Regalo (120c)">🎁 Regalar</button>
-            <button class="btn-asteria sm crimson" data-duel-warrior="${w.id}" title="Retar a Duelo Táctico">⚔️ Retar</button>
+            <button class="btn-asteria sm skeuo-wax-seal" data-inspect-warrior="${w.id}" title="Inspeccionar Perfil (user_info.php)">👤 Perfil</button>
+            <button class="btn-asteria sm gold skeuo-wax-seal" data-gift-warrior="${w.id}" title="Enviar Regalo (120c)">🎁 Regalar</button>
+            <button class="btn-asteria sm crimson skeuo-wax-seal" data-duel-warrior="${w.id}" title="Retar a Duelo Táctico">⚔️ Retar</button>
           </div>
         </div>
       `
@@ -149,7 +155,7 @@ window.GDL_MAIN_VIEWS = (function () {
     const lf = state.world && state.world.lastFightStats;
     const lastFightBannerHtml = lf
       ? `
-      <div class="loc-column-box full-span" style="border-color:var(--gold-aged);background:rgba(28,22,15,0.95)">
+      <div class="loc-column-box full-span skeuo-aged-parchment-card" style="border-color:var(--gold-aged)">
         <div class="box-header-ornate">
           <span>📊 Resumen Crónica de Combate (fight_info.php): ${lf.enemyName} — ${lf.result}</span>
           <span>Turnos: ${lf.turns}</span>
@@ -162,6 +168,7 @@ window.GDL_MAIN_VIEWS = (function () {
           <span>🔥 Daño Compañeros: <strong style="color:var(--xp-bright)">${lf.companionDmg}</strong></span>
           <span>🏅 Valor Ganado: <strong style="color:#ff9d3b">+${lf.valorEarned || 0}</strong></span>
         </div>
+        <div class="combat-log-box" style="max-height:54px;margin-top:4px">${(lf.log || []).map((l) => `<div class="combat-log-line">${l}</div>`).join('')}</div>
       </div>
     `
       : '';
@@ -169,7 +176,7 @@ window.GDL_MAIN_VIEWS = (function () {
     container.innerHTML = `
       <div class="panorama-stage-wrapper">
         <!-- HD Oil-Painted 16:9 Scene with Interactive Hotspots -->
-        <div class="hd-scene-banner" style="background-image: url('${loc.img}')">
+        <div class="hd-scene-banner skeuo-bronze-framed-banner" style="background-image: url('${loc.img}')">
           <div class="hd-scene-vignette"></div>
 
           <div class="scene-top-overlay">
@@ -179,7 +186,7 @@ window.GDL_MAIN_VIEWS = (function () {
             </div>
             <div class="scene-right-pills">
               <span class="danger-pill ${loc.isEndgameEstancia ? 'endgame' : ''}">${loc.dangerLabel}</span>
-              <button class="btn-asteria gold" id="btn-enter-hunting-mode">🏹 Modo Caza en Vivo</button>
+              <button class="btn-asteria gold skeuo-bronze-leather-plate" id="btn-enter-hunting-mode">🏹 Modo Caza en Vivo</button>
             </div>
           </div>
 
@@ -193,17 +200,17 @@ window.GDL_MAIN_VIEWS = (function () {
           </div>
         </div>
 
-        <!-- Lower Tactical Deck: Clean Sub-Tabs (No Simultaneous Clutter) -->
+        <!-- Lower Tactical Deck: Clean Sub-Tabs (Wax Seals & Bronze Plates) -->
         <div class="location-lower-deck">
           ${lastFightBannerHtml}
           <div class="loc-deck-tabs" role="tablist">
-            <button class="loc-deck-tab ${(state.ui.locDeckTab || 'npcs') === 'npcs' ? 'active' : ''}" data-loc-deck-tab="npcs">
+            <button class="loc-deck-tab skeuo-wax-seal-tab ${(state.ui.locDeckTab || 'npcs') === 'npcs' ? 'active' : ''}" data-loc-deck-tab="npcs">
               🏛️ Maestres y Personajes (${locNpcs.length})
             </button>
-            <button class="loc-deck-tab ${state.ui.locDeckTab === 'creatures' ? 'active' : ''}" data-loc-deck-tab="creatures">
+            <button class="loc-deck-tab skeuo-wax-seal-tab ${state.ui.locDeckTab === 'creatures' ? 'active' : ''}" data-loc-deck-tab="creatures">
               ⚔️ Criaturas y Jefes (${locCreatures.length})
             </button>
-            <button class="loc-deck-tab ${state.ui.locDeckTab === 'travel' ? 'active' : ''}" data-loc-deck-tab="travel">
+            <button class="loc-deck-tab skeuo-wax-seal-tab ${state.ui.locDeckTab === 'travel' ? 'active' : ''}" data-loc-deck-tab="travel">
               🧭 Rutas y Guerreros en la Zona (${zoneWarriors.length})
             </button>
           </div>
@@ -223,7 +230,7 @@ window.GDL_MAIN_VIEWS = (function () {
           <div class="loc-deck-pane ${state.ui.locDeckTab === 'travel' ? '' : 'loc-pane-hidden'}" data-loc-deck-pane="travel" id="zone-warriors-transitions-panel">
             <div class="box-header-ornate" style="margin-bottom:8px">
               <span>🧭 Transiciones (Переходы) y 👥 Guerreros en ${loc.name}</span>
-              <button class="btn-asteria sm" id="btn-toggle-zone-panel">${
+              <button class="btn-asteria sm skeuo-wax-seal" id="btn-toggle-zone-panel">${
                 isCollapsed ? '▼ Expandir Panel' : '▲ Plegar Panel'
               }</button>
             </div>
@@ -348,21 +355,21 @@ window.GDL_MAIN_VIEWS = (function () {
             <h2 class="hunting-title">🏹 Coto de Caza: ${loc.name}</h2>
           </div>
           <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
-            <button class="btn-asteria sm" id="btn-respawn-hunting">🔄 Nuevos Rastros</button>
-            <button class="btn-asteria sm gold" id="btn-exit-hunting">🏰 Volver a Estancia</button>
+            <button class="btn-asteria sm skeuo-wax-seal" id="btn-respawn-hunting">🔄 Nuevos Rastros</button>
+            <button class="btn-asteria sm gold skeuo-bronze-leather-plate" id="btn-exit-hunting">🏰 Volver a Estancia</button>
           </div>
         </div>
 
         <div class="hunting-controls-strip">
           <div style="display:flex;gap:4px;flex-wrap:wrap;align-items:center">
             <span style="font-size:10px;color:var(--gold-bright);font-family:var(--font-display)">FILTRO:</span>
-            <button class="btn-asteria sm ${filter === 'all' ? 'active' : ''}" data-hunt-filter="all">Todos</button>
-            <button class="btn-asteria sm ${filter === 'creatures' ? 'active' : ''}" data-hunt-filter="creatures">Criaturas</button>
-            <button class="btn-asteria sm ${filter === 'resources' ? 'active' : ''}" data-hunt-filter="resources">Recursos</button>
-            <button class="btn-asteria sm ${filter === 'bosses' ? 'active' : ''}" data-hunt-filter="bosses">Jefes / Élite</button>
+            <button class="btn-asteria sm skeuo-wax-seal ${filter === 'all' ? 'active' : ''}" data-hunt-filter="all">Todos</button>
+            <button class="btn-asteria sm skeuo-wax-seal ${filter === 'creatures' ? 'active' : ''}" data-hunt-filter="creatures">Criaturas</button>
+            <button class="btn-asteria sm skeuo-wax-seal ${filter === 'resources' ? 'active' : ''}" data-hunt-filter="resources">Recursos</button>
+            <button class="btn-asteria sm skeuo-wax-seal ${filter === 'bosses' ? 'active' : ''}" data-hunt-filter="bosses">Jefes / Élite</button>
           </div>
           <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
-            <button class="btn-asteria sm ${autoAggro ? 'crimson' : ''}" id="btn-toggle-auto-aggro">
+            <button class="btn-asteria sm skeuo-wax-seal ${autoAggro ? 'crimson' : ''}" id="btn-toggle-auto-aggro">
               ⚡ Agresión Automática: ${autoAggro ? 'ACTIVA' : 'OFF'}
             </button>
             <span class="entity-badge" title="Herramientas de recolección en tu mochila (+1 recurso extra y +50% XP)">
@@ -371,7 +378,7 @@ window.GDL_MAIN_VIEWS = (function () {
           </div>
         </div>
 
-        <div class="hunting-canvas-frame">
+        <div class="hunting-canvas-frame skeuo-bronze-arena-frame">
           <canvas id="gdl-hunting-canvas" width="860" height="390"></canvas>
           <div class="hunting-tooltip-box" id="hunting-hover-tooltip">
             🎯 Pasa el cursor sobre una criatura o nodo para inspeccionar su Nivel de Agresión, botín y profesión.
@@ -438,7 +445,13 @@ window.GDL_MAIN_VIEWS = (function () {
   }
 
   /* ------------------------------------------------------------------------
-     3. DIRECTIONAL 3-ZONE TACTICAL COMBAT + STANCES + 6 SUPER-BLOWS + SPELLS
+     3. VISTA DE COMBATE TÁCTICO ESTILO DWAR / BG3:
+        - Columna izquierda: 12-Slot Knight Paperdoll + Barras de Vida, Maná y Furia
+        - Arena central enmarcada en bronce con barra de jefe monumental
+        - Consola táctica inferior con Maniquí Anatómico Iluminado de 3 Zonas
+          (Cabeza, Torso, Piernas), selectores de postura de escudo con gemas
+          indicadoras (Rojo/Verde/Oro), barra de Super-Golpes rúnicos y frascos
+          de pociones en cristal.
      ------------------------------------------------------------------------ */
   function renderCombatView(container, state, combatState, actions) {
     window.GDL_HUNTING_CANVAS.stopHuntingCanvas();
@@ -454,13 +467,16 @@ window.GDL_MAIN_VIEWS = (function () {
     const heroMpPct = Math.max(0, Math.min(100, Math.round((h.mp / Math.max(1, h.maxMp)) * 100)));
     const enemyHpPct = Math.max(0, Math.min(100, Math.round((en.currentHp / Math.max(1, en.maxHp)) * 100)));
 
+    const chain = combatState.comboChain || [];
+    // Fury percentage rises with combo steps & turn momentum
+    const furyPct = Math.min(100, chain.length * 34 + (combatState.readySuperBlow ? 32 : 12));
+
     const zones = [
       { id: 'head', label: 'Cabeza y Yelmo', icon: '🪖' },
       { id: 'torso', label: 'Torso y Coraza', icon: '🥋' },
       { id: 'legs', label: 'Piernas y Guardia Baja', icon: '🥾' }
     ];
 
-    const chain = combatState.comboChain || [];
     const comboHistoryIcons = chain
       .map((z) => (z === 'head' ? '🪖 Cabeza' : z === 'torso' ? '🥋 Torso' : '🥾 Piernas'))
       .join(' → ');
@@ -477,7 +493,7 @@ window.GDL_MAIN_VIEWS = (function () {
       const isReady =
         matchedSteps === 2 || (combatState.readySuperBlow && combatState.readySuperBlow.id === sb.id);
       return `
-        <div class="superblow-chip ${isReady ? 'ready-glow' : ''}" title="${sb.desc}">
+        <div class="superblow-chip skeuo-runic-sb-chip ${isReady ? 'ready-glow' : ''}" title="${sb.desc}">
           <span>${sb.icon} <strong>${sb.name}</strong> <small style="color:var(--gold-bright)">(${matchedSteps}/3)</small></span>
           <span class="sb-seq">${sb.seqLabels.join(' → ')} ${
         isReady ? '• ⚡ ¡SIGUIENTE: ' + sb.seqLabels[2].toUpperCase() + '!' : ''
@@ -486,21 +502,28 @@ window.GDL_MAIN_VIEWS = (function () {
       `;
     }).join('');
 
-    // 3 Combat Stances
+    // 3 Combat Stances with Red / Green / Gold Indicator Gems
     const curStance = combatState.stance || 'guardia_solar';
-    const stancesHtml = ART.COMBAT_STANCES.map(
-      (st) => `
-      <button class="btn-asteria sm ${curStance === st.id ? 'gold active' : ''}" data-combat-stance="${st.id}" title="${st.desc}">
-        ${st.icon} ${st.name}
-      </button>
-    `
-    ).join('');
+    const stanceGemMap = {
+      guardia_solar: 'gem-gold',
+      furia_dragon: 'gem-red',
+      velo_sombra: 'gem-green'
+    };
+    const stancesHtml = ART.COMBAT_STANCES.map((st) => {
+      const gemCls = stanceGemMap[st.id] || 'gem-gold';
+      return `
+        <button class="btn-asteria sm skeuo-stance-gem-btn ${curStance === st.id ? 'gold active' : ''}" data-combat-stance="${st.id}" title="${st.desc}">
+          <span class="stance-indicator-gem ${gemCls}"></span>
+          <span>${st.icon} ${st.name}</span>
+        </button>
+      `;
+    }).join('');
 
     // 4 Magic School Spells
     const spellsHtml = ART.MAGIC_SPELLS.map((sp) => {
       const canCast = h.mp >= sp.mpCost;
       return `
-        <button class="btn-asteria sm ${canCast ? '' : ''}" data-cast-spell="${sp.id}" ${
+        <button class="btn-asteria sm skeuo-wax-seal" data-cast-spell="${sp.id}" ${
         !canCast ? 'disabled' : ''
       } title="${sp.desc}">
           ${sp.icon} ${sp.name.split(' ')[0]} (${sp.mpCost} MP)
@@ -508,7 +531,7 @@ window.GDL_MAIN_VIEWS = (function () {
       `;
     }).join('');
 
-    // 6-Slot Combat Belt
+    // 6-Slot Crystal Flask Potions Belt
     const beltItems =
       state.combatBelt && state.combatBelt.length === 6
         ? state.combatBelt
@@ -525,16 +548,30 @@ window.GDL_MAIN_VIEWS = (function () {
       .map((itemId) => {
         const it = ART.ARTIFACTS[itemId] || ART.ARTIFACTS.elixir_vida_menor;
         const qty = actions.getItemQty(it.id);
+        const flaskColor = it.healMp
+          ? 'sapphire-flask'
+          : it.healHp
+          ? 'crimson-flask'
+          : 'amber-flask';
         return `
-          <button class="combat-potion-btn" data-combat-potion="${it.id}" ${
+          <button class="combat-potion-btn skeuo-crystal-flask ${flaskColor}" data-combat-potion="${it.id}" ${
           qty <= 0 ? 'disabled' : ''
         } title="${it.name}: ${it.desc}">
-            <span>${it.icon}</span>
-            <span>${it.name.split(' ')[0]} (x${qty})</span>
+            <span class="flask-glass-orb">${it.icon}</span>
+            <span class="flask-label">${it.name.split(' ')[0]} (x${qty})</span>
           </button>
         `;
       })
       .join('');
+
+    // Build Left Combat Column 12-Slot Knight Paperdoll
+    const UI = window.GDL_UI;
+    const combatLeftSlotsHtml = UI && UI.buildPaperdollSlotsHtml
+      ? UI.buildPaperdollSlotsHtml(UI.LEFT_SLOTS, state, false)
+      : '';
+    const combatRightSlotsHtml = UI && UI.buildPaperdollSlotsHtml
+      ? UI.buildPaperdollSlotsHtml(UI.RIGHT_SLOTS, state, false)
+      : '';
 
     const st = combatState.stats || {
       dmgDealt: 0,
@@ -544,69 +581,137 @@ window.GDL_MAIN_VIEWS = (function () {
       companionDmg: 0
     };
 
+    const atkZ = combatState.attackZone || 'head';
+    const defZ = combatState.defendZone || 'torso';
+
     container.innerHTML = `
-      <div class="combat-stage-wrapper">
+      <div class="combat-stage-wrapper skeuo-dwar-combat-layout" data-testid="dwar-combat-view">
         ${
           h.injury
-            ? `<div style="background:rgba(158,31,23,0.35);border:1px solid var(--crimson-bright);padding:6px 10px;display:flex;justify-content:space-between;align-items:center">
+            ? `<div style="grid-column:1 / -1;background:rgba(158,31,23,0.35);border:1px solid var(--crimson-bright);padding:6px 10px;display:flex;justify-content:space-between;align-items:center">
                 <span>🩸 <strong>Herida Activa: ${h.injury.name}</strong> (-${h.injury.penaltyPct}% ATQ/DEF). Cúrala al instante para combatir al 100%:</span>
-                <button class="btn-asteria sm gold" id="btn-combat-cure-injury">🩹 Curar Herida Ahora</button>
+                <button class="btn-asteria sm gold skeuo-wax-seal" id="btn-combat-cure-injury">🩹 Curar Herida Ahora</button>
               </div>`
             : ''
         }
 
-        <!-- Top Combatants Vital Header -->
-        <div class="combat-vitals-header">
-          <div class="combatant-vital-box hero-side">
-            <div class="cv-top">
+        <!-- TOP DWAR / BG3 2-COLUMN BATTLE DECK: LEFT 12-SLOT PAPERDOLL + CENTER BRONZE ARENA -->
+        <div class="dwar-combat-upper-grid">
+          <!-- LEFT COLUMN: KNIGHT 12-SLOT PAPERDOLL + VIDA, MANÁ & FURIA BARS -->
+          <aside class="dwar-combat-paperdoll-col skeuo-gothic-arch-alcove" data-testid="combat-knight-paperdoll">
+            <div class="cv-top" style="margin-bottom:4px">
               <span class="cv-name">⚜️ ${h.name} (Nv.${h.level})</span>
-              <span class="cv-nums">❤️ ${h.hp}/${h.maxHp} • 💠 ${h.mp}/${h.maxMp} MP</span>
+              <span class="entity-badge">${(h.faction || 'ogriy').toUpperCase()}</span>
             </div>
-            <div class="asteria-bar-track" style="margin-bottom:3px"><div class="asteria-bar-fill hp" style="width:${heroHpPct}%"></div></div>
-            <div class="asteria-bar-track" style="height:6px"><div class="asteria-bar-fill mp" style="width:${heroMpPct}%"></div></div>
-          </div>
 
-          <div class="combat-vs-badge">DUELO TÁCTICO</div>
+            <!-- Vida, Maná & Furia Bars -->
+            <div class="combat-knight-bars">
+              <div class="ck-bar-row">
+                <span>❤️ Vida</span>
+                <strong>${h.hp}/${h.maxHp}</strong>
+              </div>
+              <div class="asteria-bar-track skeuo-beveled-track"><div class="asteria-bar-fill hp" style="width:${heroHpPct}%"></div></div>
 
-          <div class="combatant-vital-box enemy-side">
-            <div class="cv-top">
-              <span class="cv-name">${en.icon} ${en.name} (Nv.${en.level})</span>
-              <span class="cv-nums">${en.currentHp} / ${en.maxHp} HP</span>
+              <div class="ck-bar-row" style="margin-top:3px">
+                <span>💠 Maná</span>
+                <strong>${h.mp}/${h.maxMp}</strong>
+              </div>
+              <div class="asteria-bar-track skeuo-beveled-track"><div class="asteria-bar-fill mp" style="width:${heroMpPct}%"></div></div>
+
+              <div class="ck-bar-row" style="margin-top:3px">
+                <span>🔥 Furia Rúnica</span>
+                <strong>${furyPct}%</strong>
+              </div>
+              <div class="asteria-bar-track skeuo-beveled-track"><div class="asteria-bar-fill valor" style="width:${furyPct}%"></div></div>
             </div>
-            <div class="asteria-bar-track"><div class="asteria-bar-fill hp" style="width:${enemyHpPct}%"></div></div>
+
+            <!-- 12-Slot Knight Paperdoll around Painted Avatar -->
+            <div class="ragdoll-grid-stage combat-mini-paperdoll">
+              <div class="ragdoll-col">${combatLeftSlotsHtml}</div>
+              <div class="avatar-canvas-frame skeuo-cathedral-arch-frame combat-avatar-frame">
+                <canvas id="gdl-combat-knight-canvas" width="124" height="184"></canvas>
+              </div>
+              <div class="ragdoll-col">${combatRightSlotsHtml}</div>
+            </div>
+          </aside>
+
+          <!-- CENTER ARENA FRAMED IN FORGED BRONZE WITH MONUMENTAL BOSS BAR -->
+          <div class="dwar-combat-center-arena">
+            <!-- Monumental Boss / Enemy Health Bar -->
+            <div class="combat-vitals-header skeuo-monumental-boss-bar" data-testid="monumental-boss-bar">
+              <div class="combatant-vital-box hero-side" style="max-width:210px">
+                <div class="cv-top">
+                  <span class="cv-name">⚜️ ${h.name}</span>
+                  <span class="cv-nums">${h.hp}/${h.maxHp} HP</span>
+                </div>
+                <div class="asteria-bar-track skeuo-beveled-track"><div class="asteria-bar-fill hp" style="width:${heroHpPct}%"></div></div>
+              </div>
+
+              <div class="combat-vs-badge skeuo-vs-medallion">⚔️ DUELO TÁCTICO</div>
+
+              <div class="combatant-vital-box enemy-side monumental-enemy-side">
+                <div class="cv-top">
+                  <span class="cv-name">${en.icon} ${en.name} (Nv.${en.level})</span>
+                  <span class="cv-nums">${en.currentHp} / ${en.maxHp} HP</span>
+                </div>
+                <div class="asteria-bar-track skeuo-beveled-track monumental-hp-track">
+                  <div class="asteria-bar-fill hp" style="width:${enemyHpPct}%"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Animated 60fps HTML5 Battle Canvas in Forged Bronze Frame -->
+            <div class="combat-canvas-box skeuo-bronze-arena-frame">
+              <canvas id="gdl-battle-canvas" width="840" height="230"></canvas>
+            </div>
+
+            <!-- Combat Stances (with Red/Green/Gold Gems) & Magic School Spells Bar -->
+            <div class="combat-tactical-subbar">
+              <div class="zone-panel skeuo-obsidian-subpanel">
+                <div class="zone-panel-title">🛡️ Postura de Escudo (Gemas Rojo / Verde / Oro)</div>
+                <div class="stance-pills-row">${stancesHtml}</div>
+              </div>
+              <div class="zone-panel skeuo-obsidian-subpanel">
+                <div class="zone-panel-title">🪄 Escuela de Magia (Hechizos de Maná)</div>
+                <div class="spells-pills-row">${spellsHtml}</div>
+              </div>
+            </div>
           </div>
         </div>
 
-        <!-- Animated 60fps HTML5 Battle Canvas -->
-        <div class="combat-canvas-box">
-          <canvas id="gdl-battle-canvas" width="840" height="230"></canvas>
-        </div>
+        <!-- LOWER TACTICAL CONSOLE: 3-ZONE ILLUMINATED ANATOMICAL MANNEQUIN + SHIELD POSTURES + CRYSTAL POTIONS -->
+        <div class="tactical-zones-grid skeuo-dwar-tactical-console" data-testid="anatomical-tactical-console">
+          <!-- ILLUMINATED 3-ZONE ANATOMICAL MANNEQUIN (CABEZA, TORSO, PIERNAS) -->
+          <div class="zone-panel skeuo-mannequin-panel">
+            <div class="zone-panel-title">🎯 Maniquí Anatómico Iluminado (3 Zonas)</div>
+            <div class="anatomical-mannequin-stage">
+              <svg viewBox="0 0 120 175" class="anatomical-mannequin-svg" role="img" aria-label="Maniquí Anatómico Iluminado de 3 Zonas">
+                <!-- HEAD ZONE -->
+                <g class="mannequin-zone ${atkZ === 'head' ? 'zone-atk-glow' : ''} ${defZ === 'head' ? 'zone-def-glow' : ''}" data-mannequin-zone="head">
+                  <circle cx="60" cy="26" r="18"></circle>
+                  <path d="M47 22 L73 22 M52 29 L68 29" stroke-width="1.5"></path>
+                  <text x="60" y="29" text-anchor="middle" class="mannequin-zone-tag">C</text>
+                </g>
+                <!-- TORSO ZONE -->
+                <g class="mannequin-zone ${atkZ === 'torso' ? 'zone-atk-glow' : ''} ${defZ === 'torso' ? 'zone-def-glow' : ''}" data-mannequin-zone="torso">
+                  <polygon points="34,48 86,48 78,108 42,108"></polygon>
+                  <line x1="60" y1="52" x2="60" y2="104" stroke-width="1.5"></line>
+                  <text x="60" y="82" text-anchor="middle" class="mannequin-zone-tag">T</text>
+                </g>
+                <!-- LEGS ZONE -->
+                <g class="mannequin-zone ${atkZ === 'legs' ? 'zone-atk-glow' : ''} ${defZ === 'legs' ? 'zone-def-glow' : ''}" data-mannequin-zone="legs">
+                  <rect x="42" y="112" width="15" height="54" rx="4"></rect>
+                  <rect x="63" y="112" width="15" height="54" rx="4"></rect>
+                  <text x="60" y="142" text-anchor="middle" class="mannequin-zone-tag">P</text>
+                </g>
+              </svg>
+              <div class="mannequin-legend">
+                <span class="m-leg atk">🔴 Ataque: <strong>${atkZ.toUpperCase()}</strong></span>
+                <span class="m-leg def">🔵 Escudo: <strong>${defZ.toUpperCase()}</strong></span>
+              </div>
+            </div>
+          </div>
 
-        <!-- Combat Stances & Magic School Spells Bar -->
-        <div class="combat-tactical-subbar">
-          <div class="zone-panel">
-            <div class="zone-panel-title">🛡️ Postura de Combate Activa</div>
-            <div class="stance-pills-row">${stancesHtml}</div>
-          </div>
-          <div class="zone-panel">
-            <div class="zone-panel-title">🪄 Escuela de Magia (Hechizos de Maná)</div>
-            <div class="spells-pills-row">${spellsHtml}</div>
-          </div>
-        </div>
-
-        <!-- 6 Super-Blows Sequence Tracker -->
-        <div class="superblows-bar">
-          <div class="sb-current-chain">
-            <span>Secuencia Direccional Actual:</span>
-            <strong>${comboHistoryIcons || 'Encadena 3 zonas para desatar uno de los 6 Super-Golpes'}</strong>
-          </div>
-          <div class="sb-recipes-row six-grid">
-            ${superBlowsHtml}
-          </div>
-        </div>
-
-        <!-- 3-Zone Directional Controls + Action Execution + 6-Slot Belt + Morok Summon -->
-        <div class="tactical-zones-grid">
           <div class="zone-panel">
             <div class="zone-panel-title">1. Zona de Ataque (Objetivo)</div>
             <div class="zone-btn-list">
@@ -616,7 +721,7 @@ window.GDL_MAIN_VIEWS = (function () {
                 <button class="tactical-zone-btn ${
                   combatState.attackZone === z.id ? 'active-atk' : ''
                 }" data-atk-zone="${z.id}">
-                  <span>⚔️ ${z.label}</span>
+                  <span><i class="stance-indicator-gem gem-red"></i> ⚔️ ${z.label}</span>
                   <span>${combatState.attackZone === z.id ? 'OBJETIVO' : 'Elegir'}</span>
                 </button>
               `
@@ -634,7 +739,7 @@ window.GDL_MAIN_VIEWS = (function () {
                 <button class="tactical-zone-btn ${
                   combatState.defendZone === z.id ? 'active-def' : ''
                 }" data-def-zone="${z.id}">
-                  <span>🛡️ ${z.label}</span>
+                  <span><i class="stance-indicator-gem gem-green"></i> 🛡️ ${z.label}</span>
                   <span>${combatState.defendZone === z.id ? 'GUARDIA' : 'Cubrir'}</span>
                 </button>
               `
@@ -644,12 +749,12 @@ window.GDL_MAIN_VIEWS = (function () {
           </div>
 
           <div class="zone-panel execute-panel">
-            <div class="zone-panel-title">3. Ejecutar Turno, Morok y Cinturón (6)</div>
+            <div class="zone-panel-title">3. Embate, Morok y Frascos de Cristal (6)</div>
             <div style="display:flex;gap:5px">
-              <button class="btn-asteria crimson lg-strike" id="btn-execute-turn" style="flex:1">
+              <button class="btn-asteria crimson lg-strike skeuo-bronze-leather-plate" id="btn-execute-turn" style="flex:1">
                 ⚔️ ¡EJECUTAR EMBATE!
               </button>
-              <button class="btn-asteria gold sm" id="btn-summon-morok" ${
+              <button class="btn-asteria gold sm skeuo-wax-seal" id="btn-summon-morok" ${
                 combatState.summonedMorok ? 'disabled' : ''
               } title="Invoca tu Montura (Ignifer) o un Morok Solar para absorber 35% de daño y atacar cada turno">
                 🔥 ${combatState.summonedMorok ? 'Morok Activo' : 'Invocar Morok'}
@@ -658,7 +763,18 @@ window.GDL_MAIN_VIEWS = (function () {
             <div class="combat-potions-grid belt-6">
               ${beltHtml}
             </div>
-            <button class="btn-asteria sm" id="btn-retreat-combat">🏳️ Retirarse a la Estancia</button>
+            <button class="btn-asteria sm skeuo-wax-seal" id="btn-retreat-combat">🏳️ Retirarse a la Estancia</button>
+          </div>
+        </div>
+
+        <!-- 6 RUNIC SUPER-BLOWS SEQUENCE TRACKER BAR -->
+        <div class="superblows-bar skeuo-runic-superblows-bar">
+          <div class="sb-current-chain">
+            <span>⚡ Barra de Super-Golpes Rúnicos:</span>
+            <strong>${comboHistoryIcons || 'Encadena 3 zonas en el Maniquí Anatómico para desatar uno de los 6 Super-Golpes'}</strong>
+          </div>
+          <div class="sb-recipes-row six-grid">
+            ${superBlowsHtml}
           </div>
         </div>
 
@@ -679,6 +795,10 @@ window.GDL_MAIN_VIEWS = (function () {
       </div>
     `;
 
+    // Render both the main 60fps battle canvas and the knight paperdoll avatar in combat
+    if (window.GDL_AVATAR && window.GDL_AVATAR.drawHeroAvatar) {
+      window.GDL_AVATAR.drawHeroAvatar('gdl-combat-knight-canvas', state);
+    }
     window.GDL_COMBAT_CANVAS.renderBattleCanvas('gdl-battle-canvas', combatState, loc);
 
     const cureBtn = container.querySelector('#btn-combat-cure-injury');
@@ -695,6 +815,14 @@ window.GDL_MAIN_VIEWS = (function () {
     container.querySelectorAll('[data-cast-spell]').forEach((btn) => {
       btn.addEventListener('click', () => {
         actions.castCombatSpell(btn.getAttribute('data-cast-spell'));
+      });
+    });
+
+    // Clicking on the 3-Zone Anatomical Mannequin cycles attack zone
+    container.querySelectorAll('[data-mannequin-zone]').forEach((g) => {
+      g.addEventListener('click', () => {
+        combatState.attackZone = g.getAttribute('data-mannequin-zone');
+        renderCombatView(container, state, combatState, actions);
       });
     });
 
@@ -807,7 +935,7 @@ window.GDL_MAIN_VIEWS = (function () {
       const isAdj = adjacentSet.has(loc.id);
       const locked = state.hero.level < loc.minLevel;
       return `
-        <div class="atlas-region-card ${isCur ? 'current' : ''} ${
+        <div class="atlas-region-card skeuo-rel-card ${isCur ? 'current' : ''} ${
         loc.isEndgameEstancia ? 'endgame-card' : ''
       }">
           <div class="atlas-card-thumb" style="background-image:url('${loc.img}')">
@@ -817,7 +945,7 @@ window.GDL_MAIN_VIEWS = (function () {
           <div class="atlas-card-content">
             <h4>${loc.name}</h4>
             <p>${loc.subtitle}</p>
-            <button class="btn-asteria ${isCur || isAdj ? 'gold' : ''}" data-atlas-go="${loc.id}" ${
+            <button class="btn-asteria skeuo-bronze-leather-plate ${isCur || isAdj ? 'gold' : ''}" data-atlas-go="${loc.id}" ${
         locked ? 'disabled' : ''
       }>
               ${
@@ -842,7 +970,7 @@ window.GDL_MAIN_VIEWS = (function () {
           <span>Ubicación: ${curLoc.name} • Nivel ${state.hero.level}</span>
         </div>
 
-        <div class="asteria-interactive-map-box">
+        <div class="asteria-interactive-map-box skeuo-bronze-arena-frame">
           <svg viewBox="0 0 900 295" class="asteria-world-svg" role="img" aria-label="Mapa conectado de las 7 zonas de Asteria">
             <defs>
               <radialGradient id="mapBgGrad" cx="50%" cy="50%" r="60%">
@@ -895,7 +1023,7 @@ window.GDL_MAIN_VIEWS = (function () {
         if (!dest) return '';
         const locked = state.hero.level < dest.minLevel;
         return `
-          <button class="sidebar-trans-btn ${locked ? 'locked' : ''} ${
+          <button class="sidebar-trans-btn skeuo-bronze-leather-plate ${locked ? 'locked' : ''} ${
           dest.isEndgameEstancia ? 'endgame' : ''
         }" data-sidebar-travel="${dest.id}" title="${dest.subtitle}">
             <span class="trans-arrow">${locked ? '🔒' : '➤'}</span>

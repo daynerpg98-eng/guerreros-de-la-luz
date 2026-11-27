@@ -3,44 +3,87 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Guerreros de la LUZ — MMORPG Táctico de Fantasía Épica en Español (Crónicas de Asteria)</title>
-  <meta name="description" content="Guerreros de la LUZ: MMORPG web en español inspirado en Asteria (asteriagame.com) y Legend: Legacy of the Dragons. Interfaz modular auténtica, navegación por zonas del mapa, Facciones Ogriy y Khair, 12 Ranuras con Runas, Modo Caza, Campos de Batalla, La Gruta (ГРОТ) y Hacienda." />
+  <title>Guerreros de la LUZ — MMORPG Táctico Dark-Epic Skeuomorphic Fantasy (Crónicas de Asteria)</title>
+  <meta name="description" content="Guerreros de la LUZ: MMORPG web en español con estética Dark-Epic Skeuomorphic Fantasy inspirada en Legend: Legacy of the Dragons (DWAR / Asteria), Diablo II: Resurrected y Baldur's Gate 3. Orbes de Cristal Líquido 3D, Marcos de Bronce Forjado y Piedra Obsidiana, Sellos de Lacre, Combate Táctico de 3 Zonas con Maniquí Anatómico, Mochila de Hierro 10x6, Cubo Éltico 3D e Ignifer." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Cinzel:wght@600;700;800&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@600;700;800;900&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/asteria.css" />
 </head>
 <body>
-  <div class="asteria-shell asteria-modular-shell">
+  <!-- Hidden Reusable SVG Defs for 9-Slice Celtic Bronze Filigree, Gems & Runes -->
+  <svg width="0" height="0" style="position:absolute;pointer-events:none;opacity:0" aria-hidden="true">
+    <defs>
+      <linearGradient id="gdl-bronze-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#f4d068"></stop>
+        <stop offset="45%" stop-color="#b58932"></stop>
+        <stop offset="100%" stop-color="#523b12"></stop>
+      </linearGradient>
+      <radialGradient id="gdl-ruby-gem" cx="35%" cy="35%" r="65%">
+        <stop offset="0%" stop-color="#ff9e96"></stop>
+        <stop offset="45%" stop-color="#d9251d"></stop>
+        <stop offset="100%" stop-color="#4d0704"></stop>
+      </radialGradient>
+      <radialGradient id="gdl-sapphire-gem" cx="35%" cy="35%" r="65%">
+        <stop offset="0%" stop-color="#b3ecff"></stop>
+        <stop offset="45%" stop-color="#1982c4"></stop>
+        <stop offset="100%" stop-color="#062238"></stop>
+      </radialGradient>
+    </defs>
+  </svg>
+
+  <div class="asteria-shell asteria-modular-shell skeuo-master-shell">
     <!-- ====================================================================
-         TOP FRAME: ASTERIA VITALS, CURRENCIES & MODULAR STATE NAVIGATION
+         TOP FRAME: 3D LIQUID CRYSTAL ORBS (HP & MP), BRONZE XP/VALOR & COINS
          ==================================================================== -->
-    <header class="asteria-topbar">
-      <!-- Row 1: Hero Plate, Vitals, Currencies & Audio/Save -->
+    <header class="asteria-topbar skeuo-forged-topbar" data-testid="top-hud-header">
+      <!-- Row 1: Left 3D Crimson Life Orb, Crest, Central Vitals, Currencies, Right 3D Sapphire Mana Orb -->
       <div class="topbar-row-primary">
+        <!-- LEFT 3D LIQUID CRYSTAL ORB: VIDA (CRIMSON) -->
+        <div class="skeuo-orb-assembly hp-orb-assembly" data-testid="orb-hp" title="Esfera de Cristal Líquido — Salud Vital">
+          <div class="orb-gem-corner tl ruby"></div>
+          <div class="orb-gem-corner tr ruby"></div>
+          <div class="orb-gem-corner bl ruby"></div>
+          <div class="orb-gem-corner br ruby"></div>
+          <div class="skeuo-orb-sphere hp-sphere">
+            <div class="orb-liquid-fill hp-liquid" id="hud-hp-orb-fill" style="height:100%">
+              <span class="orb-bubble b1"></span>
+              <span class="orb-bubble b2"></span>
+              <span class="orb-bubble b3"></span>
+            </div>
+            <div class="orb-specular-highlight"></div>
+            <div class="orb-engraved-ring"></div>
+            <div class="orb-readout">
+              <span class="orb-tag">VIDA</span>
+              <strong id="hud-hp-text">210 / 210</strong>
+            </div>
+          </div>
+        </div>
+
         <div class="brand-crest-group">
-          <div class="solar-emblem-diamond" id="hud-faction-crest" title="Facción de Faeo"><span>☀️</span></div>
+          <div class="solar-emblem-diamond skeuo-crest-medallion" id="hud-faction-crest" title="Facción de Faeo"><span>☀️</span></div>
           <div class="brand-titles-col">
             <h1>Guerreros de la LUZ</h1>
             <small id="hud-faction-subtitle">Crónicas de Asteria • Faeo HD</small>
           </div>
         </div>
 
+        <!-- CENTRAL BRONZE VITALS TRACKS (Preserves #hud-hp-bar & #hud-mp-bar for 100% E2E compatibility) -->
         <div class="hud-vitals-row">
-          <div class="hud-vital-item">
+          <div class="hud-vital-item vital-orb-sync">
             <div class="hud-vital-head">
               <span>❤️ Salud</span>
-              <strong id="hud-hp-text">210 / 210</strong>
+              <strong id="hud-hp-bar-label">100%</strong>
             </div>
-            <div class="asteria-bar-track"><div class="asteria-bar-fill hp" id="hud-hp-bar" style="width:100%"></div></div>
+            <div class="asteria-bar-track skeuo-beveled-track"><div class="asteria-bar-fill hp" id="hud-hp-bar" style="width:100%"></div></div>
           </div>
 
-          <div class="hud-vital-item">
+          <div class="hud-vital-item vital-orb-sync">
             <div class="hud-vital-head">
               <span>💠 Maná</span>
-              <strong id="hud-mp-text">100 / 100</strong>
+              <strong id="hud-mp-bar-label">100%</strong>
             </div>
-            <div class="asteria-bar-track"><div class="asteria-bar-fill mp" id="hud-mp-bar" style="width:100%"></div></div>
+            <div class="asteria-bar-track skeuo-beveled-track"><div class="asteria-bar-fill mp" id="hud-mp-bar" style="width:100%"></div></div>
           </div>
 
           <div class="hud-vital-item">
@@ -48,7 +91,7 @@
               <span>⭐ XP (33/66%)</span>
               <strong id="hud-xp-text">0 / 100</strong>
             </div>
-            <div class="asteria-bar-track xp-track-milestones" title="Recompensas automáticas de oro al 33.33% y 66.66% de nivel">
+            <div class="asteria-bar-track skeuo-beveled-track xp-track-milestones" title="Recompensas automáticas de oro al 33.33% y 66.66% de nivel">
               <div class="asteria-bar-fill xp" id="hud-xp-bar" style="width:0%"></div>
               <span class="xp-tick-marker tick-33" title="Hito 33.33% XP"></span>
               <span class="xp-tick-marker tick-66" title="Hito 66.66% XP"></span>
@@ -60,7 +103,7 @@
               <span>⚔️ Valor (<span id="hud-valor-rank">Recluta</span>)</span>
               <strong id="hud-valor-text">0 / 250</strong>
             </div>
-            <div class="asteria-bar-track" title="Barra de Valor (Доблесть) y Rango Militar de Faeo">
+            <div class="asteria-bar-track skeuo-beveled-track" title="Barra de Valor (Доблесть) y Rango Militar de Faeo">
               <div class="asteria-bar-fill valor" id="hud-valor-bar" style="width:0%"></div>
             </div>
           </div>
@@ -68,102 +111,130 @@
 
         <div class="hud-right-cluster">
           <div class="currency-multi-strip">
-            <div class="currency-pouch-pill" title="Oro (o), Plata (p) y Cobre (c)">
+            <div class="currency-pouch-pill skeuo-coin-plate" title="Oro (o), Plata (p) y Cobre (c)">
               <span>🪙</span>
               <span id="hud-currency-box">6p 50c</span>
             </div>
-            <div class="currency-pouch-pill sm-curr" title="Diamantes (Бриллианты)" data-top-modal="fair">
+            <div class="currency-pouch-pill sm-curr skeuo-coin-plate" title="Diamantes (Бриллианты)" data-top-modal="fair">
               <span>💎</span>
               <span id="hud-diamonds-box">5</span>
             </div>
-            <div class="currency-pouch-pill sm-curr" title="Rubíes (Рубины)" data-top-modal="fair">
+            <div class="currency-pouch-pill sm-curr skeuo-coin-plate" title="Rubíes (Рубины)" data-top-modal="fair">
               <span>♦️</span>
               <span id="hud-rubies-box">2</span>
             </div>
-            <div class="currency-pouch-pill sm-curr" title="Monedas Trofeo (Трофейные монеты)" data-top-modal="battlefields">
+            <div class="currency-pouch-pill sm-curr skeuo-coin-plate" title="Monedas Trofeo (Трофейные монеты)" data-top-modal="battlefields">
               <span>🏅</span>
               <span id="hud-trophies-box">0</span>
             </div>
-            <div class="currency-pouch-pill sm-curr" title="Fichas Online (Товары за онлайн)" data-top-modal="fair">
+            <div class="currency-pouch-pill sm-curr skeuo-coin-plate" title="Fichas Online (Товары за онлайн)" data-top-modal="fair">
               <span>⏳</span>
               <span id="hud-online-box">3</span>
             </div>
           </div>
 
-          <button class="btn-asteria sm" id="btn-toggle-audio" title="Activar/Silenciar Sonido WebAudio">🔊</button>
-          <button class="btn-asteria sm gold" data-top-modal="save" title="Guardar, Exportar o Importar Partida">💾</button>
+          <button class="btn-asteria sm skeuo-wax-seal" id="btn-toggle-audio" title="Activar/Silenciar Sonido WebAudio">🔊</button>
+          <button class="btn-asteria sm gold skeuo-wax-seal" data-top-modal="save" title="Guardar, Exportar o Importar Partida">💾</button>
+        </div>
+
+        <!-- RIGHT 3D LIQUID CRYSTAL ORB: MANÁ (SAPPHIRE) -->
+        <div class="skeuo-orb-assembly mp-orb-assembly" data-testid="orb-mp" title="Esfera de Cristal Líquido — Maná Astral">
+          <div class="orb-gem-corner tl sapphire"></div>
+          <div class="orb-gem-corner tr sapphire"></div>
+          <div class="orb-gem-corner bl sapphire"></div>
+          <div class="orb-gem-corner br sapphire"></div>
+          <div class="skeuo-orb-sphere mp-sphere">
+            <div class="orb-liquid-fill mp-liquid" id="hud-mp-orb-fill" style="height:100%">
+              <span class="orb-bubble b1"></span>
+              <span class="orb-bubble b2"></span>
+              <span class="orb-bubble b3"></span>
+            </div>
+            <div class="orb-specular-highlight"></div>
+            <div class="orb-engraved-ring"></div>
+            <div class="orb-readout">
+              <span class="orb-tag">MANÁ</span>
+              <strong id="hud-mp-text">100 / 100</strong>
+            </div>
+          </div>
         </div>
       </div>
 
-      <!-- Row 2: Authentic Asteria Modular State Switcher + Compact Auras + Reino Menu -->
-      <nav class="center-stage-nav" aria-label="Navegación Modular de Asteria">
+      <!-- Row 2: Bronze & Crimson Leather Plates Navigation + Wax Seals Auras + Reino Menu -->
+      <nav class="center-stage-nav skeuo-iron-nav-deck" aria-label="Navegación Modular de Asteria">
         <div class="topbar-row-modules">
           <div class="modular-tabs-strip">
-            <button class="mod-nav-btn active" data-nav-view="location" data-module-target="world" title="Ubicación Actual (Локация)">🏰 Ubicación</button>
-            <button class="mod-nav-btn" data-nav-view="hunting" data-module-target="world" title="Modo Caza con Radar (Охота)">🏹 Caza</button>
-            <button class="mod-nav-btn" data-nav-view="combat" data-module-target="world" title="Combate Táctico de 3 Zonas (Бой)">⚔️ Combate</button>
-            <button class="mod-nav-btn" data-nav-view="atlas" data-module-target="world" title="Mapa Interactivo de Zonas (Карта мира)">🗺️ Mapa</button>
+            <button class="mod-nav-btn skeuo-bronze-leather-plate active" data-nav-view="location" data-module-target="world" title="Ubicación Actual (Локация)">🏰 Ubicación</button>
+            <button class="mod-nav-btn skeuo-bronze-leather-plate" data-nav-view="hunting" data-module-target="world" title="Modo Caza con Radar (Охота)">🏹 Caza</button>
+            <button class="mod-nav-btn skeuo-bronze-leather-plate" data-nav-view="combat" data-module-target="world" title="Combate Táctico de 3 Zonas (Бой)">⚔️ Combate</button>
+            <button class="mod-nav-btn skeuo-bronze-leather-plate" data-nav-view="atlas" data-module-target="world" title="Mapa Interactivo de Zonas (Карта мира)">🗺️ Mapa</button>
             <span class="mod-nav-divider"></span>
-            <button class="mod-nav-btn" data-module-tab="hero" title="Perfil y Armadura de 12 Ranuras (Персонаж)">👤 Personaje</button>
-            <button class="mod-nav-btn" data-module-tab="bag" title="Mochila de 6 Categorías (Рюкзак)">🎒 Mochila</button>
-            <button class="mod-nav-btn" data-module-tab="quests" title="Códice de Misiones (Квесты)">📜 Misiones</button>
+            <button class="mod-nav-btn skeuo-bronze-leather-plate" data-module-tab="hero" title="Perfil, Arco Gótico y Armadura de 12 Ranuras (Персонаж)">👤 Personaje</button>
+            <button class="mod-nav-btn skeuo-bronze-leather-plate" data-module-tab="bag" title="Mochila de Hierro (10x6), Cubo Éltico y Pergamino (Рюкзак)">🎒 Mochila</button>
+            <button class="mod-nav-btn skeuo-bronze-leather-plate" data-module-tab="quests" title="Códice de Misiones (Квесты)">📜 Misiones</button>
           </div>
 
           <div class="topbar-modules-right">
             <div class="hud-aura-badges">
-              <button class="aura-pill-btn" id="hud-faction-badge" title="Cambiar Facción (Ogriy / Khair)">☀️ Ogriy</button>
-              <button class="aura-pill-btn" id="hud-antixp-badge" title="Anillo Anti-XP (Антиопыт)">💍 Антиопыт: OFF</button>
-              <button class="aura-pill-btn" id="hud-unbreakable-badge" title="Aura Inquebrantable (Неслом)">🛡️ Неслом</button>
-              <button class="aura-pill-btn injury-pill hidden" id="hud-injury-badge" title="Curar Herida de Guerra">🩸 Herida</button>
+              <button class="aura-pill-btn skeuo-wax-seal-pill" id="hud-faction-badge" title="Cambiar Facción (Ogriy / Khair)">☀️ Ogriy</button>
+              <button class="aura-pill-btn skeuo-wax-seal-pill" id="hud-antixp-badge" title="Anillo Anti-XP (Антиопыт)">💍 Антиопыт: OFF</button>
+              <button class="aura-pill-btn skeuo-wax-seal-pill" id="hud-unbreakable-badge" title="Aura Inquebrantable (Неслом)">🛡️ Неслом</button>
+              <button class="aura-pill-btn skeuo-wax-seal-pill injury-pill hidden" id="hud-injury-badge" title="Curar Herida de Guerra">🩸 Herida</button>
             </div>
-            <button class="btn-asteria sm gold" id="btn-toggle-systems-drawer" title="Abrir Menú del Reino de Asteria">✨ Reino ▾</button>
+            <button class="btn-asteria sm gold skeuo-bronze-leather-plate" id="btn-toggle-systems-drawer" title="Abrir Relicario del Reino de Asteria">✨ Reino ▾</button>
           </div>
         </div>
 
         <!-- Collapsible Kingdom Systems Drawer (All Asteria Modals Organized Neatly) -->
         <div class="asteria-14-nav-grid secondary-systems-drawer collapsed" id="asteria-systems-drawer">
-          <button class="btn-asteria sm crimson" data-top-modal="battlefields">🚩 Campos de Batalla</button>
-          <button class="btn-asteria sm gold" data-top-modal="instances">🕳️ Gruta e Instancias</button>
-          <button class="btn-asteria sm" data-top-modal="estate">🏛️ Hacienda</button>
-          <button class="btn-asteria sm" data-top-modal="reputations">🎖️ Reputaciones</button>
-          <button class="btn-asteria sm gold" data-top-modal="mounts">🦅 Academia y Mascotas</button>
-          <button class="btn-asteria sm" data-top-modal="decks">🃏 Barajas</button>
-          <button class="btn-asteria sm gold" data-top-modal="fair">🎡 Feria y Rueda</button>
-          <button class="btn-asteria sm" data-top-modal="bank">🏦 Banco y Subasta</button>
-          <button class="btn-asteria sm" data-top-modal="profile">👤 Perfil y Promos</button>
-          <button class="btn-asteria sm" data-top-modal="library">📚 Biblioteca</button>
-          <button class="btn-asteria sm" data-top-modal="professions">⚒️ 9 Profesiones</button>
-          <button class="btn-asteria sm" data-top-modal="cube">🧊 Cubo Éltico</button>
-          <button class="btn-asteria sm" data-top-modal="medals">🎖️ Medallas</button>
-          <button class="btn-asteria sm" data-top-modal="mirror">🪞 Espejo Mágico</button>
-          <button class="btn-asteria sm" data-top-modal="tavern">🎲 Taberna & Cartas</button>
-          <button class="btn-asteria sm crimson" data-top-modal="arena">🏟️ Arena & Clanes</button>
+          <button class="btn-asteria sm crimson skeuo-wax-seal" data-top-modal="battlefields">🚩 Campos de Batalla</button>
+          <button class="btn-asteria sm gold skeuo-wax-seal" data-top-modal="instances">🕳️ Gruta e Instancias</button>
+          <button class="btn-asteria sm skeuo-wax-seal" data-top-modal="estate">🏛️ Hacienda</button>
+          <button class="btn-asteria sm skeuo-wax-seal" data-top-modal="reputations">🎖️ Reputaciones</button>
+          <button class="btn-asteria sm gold skeuo-wax-seal" data-top-modal="mounts">🦅 Academia y Mascotas</button>
+          <button class="btn-asteria sm skeuo-wax-seal" data-top-modal="decks">🃏 Barajas</button>
+          <button class="btn-asteria sm gold skeuo-wax-seal" data-top-modal="fair">🎡 Feria y Rueda</button>
+          <button class="btn-asteria sm skeuo-wax-seal" data-top-modal="bank">🏦 Banco y Subasta</button>
+          <button class="btn-asteria sm skeuo-wax-seal" data-top-modal="profile">👤 Perfil y Promos</button>
+          <button class="btn-asteria sm skeuo-wax-seal" data-top-modal="library">📚 Biblioteca</button>
+          <button class="btn-asteria sm skeuo-wax-seal" data-top-modal="professions">⚒️ 9 Profesiones</button>
+          <button class="btn-asteria sm skeuo-wax-seal" data-top-modal="cube">🧊 Cubo Éltico</button>
+          <button class="btn-asteria sm skeuo-wax-seal" data-top-modal="medals">🎖️ Medallas</button>
+          <button class="btn-asteria sm skeuo-wax-seal" data-top-modal="mirror">🪞 Espejo Mágico</button>
+          <button class="btn-asteria sm skeuo-wax-seal" data-top-modal="tavern">🎲 Taberna & Cartas</button>
+          <button class="btn-asteria sm crimson skeuo-wax-seal" data-top-modal="arena">🏟️ Arena & Clanes</button>
         </div>
       </nav>
     </header>
 
     <!-- ====================================================================
-         MIDDLE FRAME: AUTHENTIC 2-COLUMN ASTERIA WORKSPACE
-         Left/Center: Single Active Modular Stage (World / Personaje / Mochila)
-         Right: Dedicated Zone Transitions (Переходы) & Warriors in Zone Sidebar
+         MIDDLE FRAME: 9-SLICE FORGED BRONZE & OBSIDIAN WORKSPACE (#main_frame_TD)
          ==================================================================== -->
-    <main class="asteria-workspace asteria-2col-workspace">
+    <main class="asteria-workspace asteria-2col-workspace" id="main_frame_TD" data-testid="main_frame_TD">
       <!-- MAIN MODULAR VIEWPORT (SHOWS ONLY 1 ACTIVE MODULE AT A TIME) -->
       <div class="asteria-modular-stage">
-        <!-- MODULE PANE A: WORLD (Location Panorama / Hunting / Combat / World Map) -->
-        <section class="asteria-panel asteria-module-pane" id="module-pane-world" aria-label="Escenario Principal">
+        <!-- MODULE PANE A: WORLD (Location Panorama / Hunting / DWAR-BG3 Combat / World Map) -->
+        <section class="asteria-panel asteria-module-pane skeuo-9slice-panel" id="module-pane-world" aria-label="Escenario Principal">
+          <span class="skeuo-corner-rivet tl ruby"></span>
+          <span class="skeuo-corner-rivet tr ruby"></span>
+          <span class="skeuo-corner-rivet bl sapphire"></span>
+          <span class="skeuo-corner-rivet br sapphire"></span>
           <div class="center-stage-body" id="center-stage-container"></div>
         </section>
 
-        <!-- MODULE PANE B: PERSONAJE (12-Slot Paperdoll, Avatar Canvas, Faction/Style & Stats) -->
-        <section class="asteria-panel asteria-module-pane module-hidden" id="module-pane-hero" aria-label="Perfil del Guerrero">
-          <div class="panel-ornate-header">
-            <span>👤 Perfil del Guerrero — Armadura de 12 Ranuras</span>
+        <!-- MODULE PANE B: PERSONAJE (Gothic Cathedral Arch 12-Slot Paperdoll, Eltic Cube Chamber & Aged Leather Parchment Stats) -->
+        <section class="asteria-panel asteria-module-pane skeuo-9slice-panel module-hidden" id="module-pane-hero" aria-label="Perfil del Guerrero">
+          <span class="skeuo-corner-rivet tl ruby"></span>
+          <span class="skeuo-corner-rivet tr ruby"></span>
+          <span class="skeuo-corner-rivet bl ruby"></span>
+          <span class="skeuo-corner-rivet br ruby"></span>
+          <div class="panel-ornate-header skeuo-filigree-header">
+            <span>👤 Relicario del Caballero — Arco Gótico de 12 Ranuras, Cámara del Cubo Éltico y Pergamino Real</span>
             <span id="hero-style-header-label">Guerrero Solar</span>
           </div>
-          <div class="panel-scroll-body hero-module-spacious-grid">
-            <div class="hero-module-left-col">
-              <div class="hero-id-banner">
+          <div class="panel-scroll-body hero-module-spacious-grid skeuo-hero-3col-sanctuary">
+            <!-- LEFT: GOTHIC CATHEDRAL ARCH WITH 12 ILLUMINATED PAPERDOLL SLOTS -->
+            <div class="hero-module-left-col skeuo-gothic-arch-alcove">
+              <div class="hero-id-banner skeuo-bronze-nameplate">
                 <div>
                   <div class="hero-name-clickable" id="hero-name-title" title="Haz clic para cambiar tu nombre">Aethelgard</div>
                   <div class="hero-clan-tag" id="hero-clan-subtitle">Clan: Hijos del Alba</div>
@@ -171,9 +242,9 @@
                 <div class="hero-lvl-medal" id="hero-level-badge">1</div>
               </div>
 
-              <div class="ragdoll-grid-stage">
+              <div class="ragdoll-grid-stage skeuo-cathedral-paperdoll">
                 <div class="ragdoll-col" id="ragdoll-left-slots"></div>
-                <div class="avatar-canvas-frame">
+                <div class="avatar-canvas-frame skeuo-cathedral-arch-frame">
                   <canvas id="gdl-hero-avatar-canvas" width="160" height="220"></canvas>
                 </div>
                 <div class="ragdoll-col" id="ragdoll-right-slots"></div>
@@ -182,46 +253,77 @@
               <div class="companions-strip" id="hero-companions-strip"></div>
             </div>
 
-            <div class="hero-module-right-col">
-              <div class="box-header-ornate" style="margin-bottom:8px">
+            <!-- CENTER: RUNIC CHAMBER WITH 3D EMERALD ELTIC CUBE & FACTION/STYLE -->
+            <div class="hero-module-center-col skeuo-runic-cube-chamber">
+              <div class="box-header-ornate">
+                <span>🧊 Cámara Rúnica — Cubo Éltico 3D</span>
+                <span>Síntesis Arcana</span>
+              </div>
+              <div class="eltic-cube-3d-pedestal" data-open-special="cube" title="Abrir Santuario del Cubo Éltico">
+                <div class="eltic-cube-emerald-aura"></div>
+                <img src="assets/ui/eltic_cube_3d.jpg" alt="Cubo Éltico 3D" class="eltic-cube-3d-img" />
+                <div class="eltic-cube-caption">
+                  <strong>Cubo Éltico de Esmeralda</strong>
+                  <small>Haz clic para transmutar reliquias, fragmentos y runas míticas</small>
+                </div>
+              </div>
+
+              <div class="box-header-ornate" style="margin-top:10px">
                 <span>Facción y Estilo de Combate</span>
                 <span>Faeo</span>
               </div>
               <div class="faction-style-switcher" id="hero-faction-style-bar"></div>
+            </div>
 
-              <div class="box-header-ornate" style="margin:12px 0 8px">
-                <span>Atributos de Combate</span>
+            <!-- RIGHT: AGED LEATHER PARCHMENT SCROLL WITH CALLIGRAPHY STATS & COIN POUCH -->
+            <div class="hero-module-right-col skeuo-aged-parchment-scroll">
+              <div class="box-header-ornate parchment-ink-header">
+                <span>📜 Pergamino de Atributos y Estadísticas</span>
                 <span class="entity-badge crimson" id="hero-unspent-pts" style="display:none">+3 PTS</span>
               </div>
-              <div class="attributes-grid-2col" id="hero-attributes-grid"></div>
+              <div class="attributes-grid-2col parchment-calligraphy-grid" id="hero-attributes-grid"></div>
+
+              <div class="box-header-ornate parchment-ink-header" style="margin-top:12px">
+                <span>🪙 Monedero Ilustrado del Tesoro Real</span>
+                <span>Arcas</span>
+              </div>
+              <div class="skeuo-illustrated-coin-pouch" id="hero-illustrated-pouch"></div>
             </div>
           </div>
         </section>
 
-        <!-- MODULE PANE C: MOCHILA, MISIONES & SISTEMAS -->
-        <section class="asteria-panel asteria-module-pane module-hidden" id="module-pane-bag" aria-label="Mochila y Sistemas">
-          <nav class="right-dock-tabs">
-            <button class="dock-tab-btn active" data-right-dock-tab="bag">🎒 Mochila (85+)</button>
-            <button class="dock-tab-btn" data-right-dock-tab="quests">📜 Misiones</button>
-            <button class="dock-tab-btn" data-right-dock-tab="specials">✨ Sistemas del Reino</button>
+        <!-- MODULE PANE C: MOCHILA DE HIERRO (10x6), CUBO ÉLTICO, PERGAMINO & TOOLTIP (#artifact_alt) -->
+        <section class="asteria-panel asteria-module-pane skeuo-9slice-panel module-hidden" id="module-pane-bag" aria-label="Mochila y Sistemas">
+          <span class="skeuo-corner-rivet tl sapphire"></span>
+          <span class="skeuo-corner-rivet tr sapphire"></span>
+          <span class="skeuo-corner-rivet bl ruby"></span>
+          <span class="skeuo-corner-rivet br ruby"></span>
+          <nav class="right-dock-tabs skeuo-iron-tabs-bar">
+            <button class="dock-tab-btn skeuo-bronze-leather-plate active" data-right-dock-tab="bag">🎒 Mochila de Hierro (10x6)</button>
+            <button class="dock-tab-btn skeuo-bronze-leather-plate" data-right-dock-tab="quests">📜 Códice de Misiones</button>
+            <button class="dock-tab-btn skeuo-bronze-leather-plate" data-right-dock-tab="specials">✨ Relicarios del Reino</button>
           </nav>
           <div class="panel-scroll-body" id="right-dock-content"></div>
         </section>
       </div>
 
       <!-- RIGHT DEDICATED ASTERIA NAVIGATION SIDEBAR (Переходы + Персонажи в локации) -->
-      <aside class="asteria-panel asteria-nav-sidebar" aria-label="Navegación de Zonas y Guerreros">
+      <aside class="asteria-panel asteria-nav-sidebar skeuo-9slice-panel" aria-label="Navegación de Zonas y Guerreros">
+        <span class="skeuo-corner-rivet tl ruby"></span>
+        <span class="skeuo-corner-rivet tr ruby"></span>
+        <span class="skeuo-corner-rivet bl sapphire"></span>
+        <span class="skeuo-corner-rivet br sapphire"></span>
         <div class="sidebar-block transitions-block">
-          <div class="panel-ornate-header">
+          <div class="panel-ornate-header skeuo-filigree-header">
             <span>🧭 Transiciones</span>
-            <button class="btn-asteria sm" id="btn-sidebar-open-map" title="Ver Mapa Completo de Asteria">🗺️ Mapa</button>
+            <button class="btn-asteria sm skeuo-wax-seal" id="btn-sidebar-open-map" title="Ver Mapa Completo de Asteria">🗺️ Mapa</button>
           </div>
           <div class="sidebar-current-loc-banner" id="asteria-sidebar-current-loc">Ciudadela de la Luz</div>
           <div class="sidebar-transitions-list" id="asteria-sidebar-transitions"></div>
         </div>
 
         <div class="sidebar-block warriors-block">
-          <div class="panel-ornate-header">
+          <div class="panel-ornate-header skeuo-filigree-header">
             <span>👥 En esta Zona</span>
             <span id="asteria-sidebar-warriors-count">0</span>
           </div>
@@ -231,17 +333,19 @@
     </main>
 
     <!-- ====================================================================
-         BOTTOM FRAME: CLEAN FULL-WIDTH MULTI-CHANNEL CHAT & CHRONICLE
+         BOTTOM FRAME: WAX-SEALED MULTI-CHANNEL CHAT & CHRONICLE (#chat_TD)
          ==================================================================== -->
-    <footer class="asteria-bottom-dock asteria-full-chat-dock">
-      <section class="asteria-panel" aria-label="Chat y Crónica de Asteria">
-        <div class="chat-channels-bar">
+    <footer class="asteria-bottom-dock asteria-full-chat-dock" id="chat_TD" data-testid="chat_TD">
+      <section class="asteria-panel skeuo-9slice-panel" aria-label="Chat y Crónica de Asteria">
+        <span class="skeuo-corner-rivet tl ruby"></span>
+        <span class="skeuo-corner-rivet tr ruby"></span>
+        <div class="chat-channels-bar skeuo-wax-tabs-bar">
           <div class="chat-tabs-group">
-            <button class="chat-ch-btn active" data-chat-ch="todos">Todos</button>
-            <button class="chat-ch-btn" data-chat-ch="sistema">Crónica</button>
-            <button class="chat-ch-btn" data-chat-ch="general">General (16 IA)</button>
-            <button class="chat-ch-btn" data-chat-ch="clan">Clan</button>
-            <button class="chat-ch-btn" data-chat-ch="comercio">Comercio</button>
+            <button class="chat-ch-btn skeuo-wax-seal-tab active" data-chat-ch="todos" title="Todos los Canales">🕯️ Todos</button>
+            <button class="chat-ch-btn skeuo-wax-seal-tab" data-chat-ch="general" title="Canal Mundo (16 Guerreros IA)">🌍 Mundo</button>
+            <button class="chat-ch-btn skeuo-wax-seal-tab" data-chat-ch="clan" title="Canal del Clan">🛡️ Clan</button>
+            <button class="chat-ch-btn skeuo-wax-seal-tab" data-chat-ch="comercio" title="Canal de Comercio y Subasta">⚖️ Comercio</button>
+            <button class="chat-ch-btn skeuo-wax-seal-tab" data-chat-ch="sistema" title="Crónica y Registro de Combate">⚔️ Combate / Crónica</button>
           </div>
           <div style="display:flex;align-items:center;gap:12px">
             <span style="font-size:10px;color:var(--xp-bright)">● 16 Guerreros en línea</span>
@@ -250,21 +354,25 @@
         </div>
         <div class="chat-feed-box" id="gdl-chat-feed"></div>
         <div class="chat-input-row">
-          <input type="text" id="gdl-chat-input" class="chat-text-input" placeholder="Escribe en el canal de la Taberna o del Clan y pulsa Enter..." />
-          <button class="btn-asteria sm gold" id="gdl-chat-send">Enviar</button>
+          <input type="text" id="gdl-chat-input" class="chat-text-input" placeholder="Estampa tu mensaje con lacre en el canal del Mundo, Clan o Comercio y pulsa Enter..." />
+          <button class="btn-asteria sm gold skeuo-wax-seal" id="gdl-chat-send">Enviar</button>
         </div>
       </section>
     </footer>
   </div>
 
   <!-- ======================================================================
-       HD ILLUSTRATED MODAL WINDOW
+       RELIQUARY BRONZE & PARCHMENT MODAL WINDOW (#popup_global_container)
        ====================================================================== -->
-  <div class="gdl-modal-backdrop hidden" id="gdl-modal-backdrop" role="dialog" aria-modal="true">
-    <div class="gdl-modal-window">
-      <div class="gdl-modal-header">
+  <div class="gdl-modal-backdrop hidden" id="gdl-modal-backdrop" data-testid="popup_global_container" role="dialog" aria-modal="true">
+    <div class="gdl-modal-window skeuo-9slice-modal" id="popup_global_container">
+      <span class="skeuo-corner-rivet tl ruby"></span>
+      <span class="skeuo-corner-rivet tr ruby"></span>
+      <span class="skeuo-corner-rivet bl sapphire"></span>
+      <span class="skeuo-corner-rivet br sapphire"></span>
+      <div class="gdl-modal-header skeuo-filigree-header">
         <div id="gdl-modal-title">Santuario</div>
-        <button class="btn-asteria sm" id="btn-close-gdl-modal">Cerrar ✕</button>
+        <button class="btn-asteria sm skeuo-wax-seal" id="btn-close-gdl-modal">Cerrar ✕</button>
       </div>
       <div class="gdl-modal-body" id="gdl-modal-body"></div>
     </div>

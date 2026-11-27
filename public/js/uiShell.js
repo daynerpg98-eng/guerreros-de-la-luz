@@ -1,11 +1,14 @@
 /* ==========================================================================
    GUERREROS DE LA LUZ — public/js/uiShell.js
-   Top HUD Renderer (HP, MP, XP with 33/66% ticks, Orange Valor bar, Multi-
-   Currency Diamonds/Rubies/Trophy Coins/Online Tokens, Faction & Aura Badges),
-   Left Hero Panel (Faction & Combat Style switcher, 12-Slot Paperdoll with
-   Unequip, Durability & Rune badges, Companions Strip, Attributes),
-   Right Dock (6-Category Filterable Expandable Backpack, Item Inspector with
-   Equip/Unequip/Socket Rune/Repair/Belt/Open Chest/Sell, Quests & Systems Hub)
+   Dark-Epic Skeuomorphic Fantasy UI Shell:
+   - Top HUD Renderer: 3D Liquid Crystal Orbs (HP Crimson & MP Sapphire) +
+     XP with 33/66% ticks, Orange Valor bar, Multi-Currency Plates, Wax Seals
+   - Hero Sanctuary Panel: Gothic Cathedral Arch 12-Slot Paperdoll, 3D Emerald
+     Eltic Cube Chamber, Aged Leather Parchment Calligraphy Stats & Illustrated
+     Gold/Silver/Copper Coin Stack Pouch
+   - Right / Mochila Dock: 3-Column Integrated Layout (Gothic Paperdoll Summary,
+     10x6 Forged Iron Backpack Grid + 3D Eltic Cube Chamber, Aged Parchment
+     Stats + Illustrated Coin Pouch + Golden Filigree Tooltip #artifact_alt)
    ========================================================================== */
 
 window.GDL_UI = (function () {
@@ -65,7 +68,53 @@ window.GDL_UI = (function () {
   };
 
   /* ------------------------------------------------------------------------
-     RENDER TOP HEADER BAR (VITALS, 33/66% XP, ORANGE VALOR BAR, CURRENCIES)
+     HELPER: ILLUSTRATED COIN STACK POUCH (GOLD / SILVER / BRONZE)
+     ------------------------------------------------------------------------ */
+  function buildIllustratedCoinPouchHtml(h) {
+    const totalCopper = Math.max(0, Math.floor(h.copper || 0));
+    const gold = Math.floor(totalCopper / 10000);
+    const silver = Math.floor((totalCopper % 10000) / 100);
+    const bronze = totalCopper % 100;
+
+    return `
+      <div class="coin-stack-card gold-stack" title="Monedas de Oro Imperial (1o = 100p)">
+        <div class="coin-pile-visual">
+          <span class="coin-disc g1"></span>
+          <span class="coin-disc g2"></span>
+          <span class="coin-disc g3"></span>
+        </div>
+        <div class="coin-stack-meta">
+          <small>Oro</small>
+          <strong class="curr-g">${gold}o</strong>
+        </div>
+      </div>
+      <div class="coin-stack-card silver-stack" title="Monedas de Plata Lunar (1p = 100c)">
+        <div class="coin-pile-visual">
+          <span class="coin-disc s1"></span>
+          <span class="coin-disc s2"></span>
+          <span class="coin-disc s3"></span>
+        </div>
+        <div class="coin-stack-meta">
+          <small>Plata</small>
+          <strong class="curr-s">${silver}p</strong>
+        </div>
+      </div>
+      <div class="coin-stack-card bronze-stack" title="Monedas de Bronce Forjado">
+        <div class="coin-pile-visual">
+          <span class="coin-disc b1"></span>
+          <span class="coin-disc b2"></span>
+          <span class="coin-disc b3"></span>
+        </div>
+        <div class="coin-stack-meta">
+          <small>Bronce</small>
+          <strong class="curr-c">${bronze}c</strong>
+        </div>
+      </div>
+    `;
+  }
+
+  /* ------------------------------------------------------------------------
+     RENDER TOP HEADER BAR (3D LIQUID CRYSTAL ORBS, 33/66% XP, VALOR, COINS)
      ------------------------------------------------------------------------ */
   function renderTopHeader(state) {
     const h = state.hero;
@@ -80,12 +129,23 @@ window.GDL_UI = (function () {
     if (mpTextEl) mpTextEl.textContent = `${h.mp} / ${h.maxMp}`;
     if (xpTextEl) xpTextEl.textContent = `${h.xp} / ${h.xpNext}`;
 
+    const hpBarLabel = document.getElementById('hud-hp-bar-label');
+    const mpBarLabel = document.getElementById('hud-mp-bar-label');
+    if (hpBarLabel) hpBarLabel.textContent = `${hpPct}%`;
+    if (mpBarLabel) mpBarLabel.textContent = `${mpPct}%`;
+
     const hpBarEl = document.getElementById('hud-hp-bar');
     const mpBarEl = document.getElementById('hud-mp-bar');
     const xpBarEl = document.getElementById('hud-xp-bar');
     if (hpBarEl) hpBarEl.style.width = `${hpPct}%`;
     if (mpBarEl) mpBarEl.style.width = `${mpPct}%`;
     if (xpBarEl) xpBarEl.style.width = `${xpPct}%`;
+
+    // 3D Liquid Crystal Orbs Fill Height
+    const hpOrbFill = document.getElementById('hud-hp-orb-fill');
+    const mpOrbFill = document.getElementById('hud-mp-orb-fill');
+    if (hpOrbFill) hpOrbFill.style.height = `${hpPct}%`;
+    if (mpOrbFill) mpOrbFill.style.height = `${mpPct}%`;
 
     // Orange Valor Bar & Military Rank
     const vInfo = ART.getValorRank(h.valor || 0);
@@ -148,7 +208,70 @@ window.GDL_UI = (function () {
   }
 
   /* ------------------------------------------------------------------------
-     RENDER LEFT HERO 12-SLOT PAPERDOLL, FACTION/STYLE & ATTRIBUTES PANEL
+     HELPER: BUILD 12 PAPERDOLL SLOTS HTML
+     ------------------------------------------------------------------------ */
+  const LEFT_SLOTS = [
+    { slot: 'helm', label: 'Yelmo', icon: '🪖' },
+    { slot: 'pauldrons', label: 'Hombreras', icon: '🛡️' },
+    { slot: 'amulet', label: 'Amuleto', icon: '📿' },
+    { slot: 'weapon', label: 'Arma', icon: '🗡️' },
+    { slot: 'armor', label: 'Coraza', icon: '🥋' },
+    { slot: 'bracers', label: 'Brazales', icon: '🧤' }
+  ];
+  const RIGHT_SLOTS = [
+    { slot: 'shield', label: 'Escudo', icon: '🛡️' },
+    { slot: 'cloak', label: 'Manto', icon: '🧥' },
+    { slot: 'cuisses', label: 'Quijotes', icon: '👖' },
+    { slot: 'ring', label: 'Sortija', icon: '💍' },
+    { slot: 'belt', label: 'Cinturón', icon: '🎗️' },
+    { slot: 'boots', label: 'Grebas', icon: '🥾' }
+  ];
+
+  function buildPaperdollSlotsHtml(slots, state, useInspectAttr = true) {
+    return slots
+      .map((s) => {
+        const itemId = state.equipment[s.slot];
+        const it = itemId ? ART.ARTIFACTS[itemId] : null;
+        const rawDur = state.equipmentDurability && state.equipmentDurability[s.slot];
+        const maxDur = (it && it.maxDurability) || 60;
+        const durObj = it
+          ? typeof rawDur === 'number'
+            ? { cur: rawDur, max: maxDur }
+            : rawDur && typeof rawDur.cur === 'number'
+            ? rawDur
+            : { cur: maxDur, max: maxDur }
+          : null;
+        const durPct = durObj ? Math.max(0, Math.min(100, Math.round((durObj.cur / Math.max(1, durObj.max)) * 100))) : 100;
+        const runeId = state.equipmentRunes && state.equipmentRunes[s.slot];
+        const runeObj = runeId ? ART.ARTIFACTS[runeId] : null;
+        const attrName = useInspectAttr ? `data-inspect-slot="${s.slot}"` : `data-combat-paperdoll-slot="${s.slot}"`;
+
+        return `
+          <div class="ragdoll-slot skeuo-beveled-slot ${it ? 'equipped rarity-border-' + it.rarity : ''}" ${attrName} title="${
+          it
+            ? `${it.name} (Durabilidad: ${durObj.cur}/${durObj.max})${
+                runeObj ? ' • Runa: ' + runeObj.name : ''
+              } — Clic: Inspeccionar / Doble clic: Desequipar`
+            : s.label + ' (Vacío)'
+        }">
+            ${runeObj ? `<span class="rg-rune-dot" title="${runeObj.name}">${runeObj.icon}</span>` : ''}
+            <span class="rg-icon">${it ? it.icon : s.icon}</span>
+            <span class="rg-label">${it ? it.name : s.label}</span>
+            ${
+              it && durObj
+                ? `<div class="rg-dur-bar"><div class="rg-dur-fill" style="width:${durPct}%;background:${
+                    durPct > 35 ? 'var(--xp-bright)' : 'var(--crimson-bright)'
+                  }"></div></div>`
+                : ''
+            }
+          </div>
+        `;
+      })
+      .join('');
+  }
+
+  /* ------------------------------------------------------------------------
+     RENDER LEFT HERO 12-SLOT PAPERDOLL, ELTIC CUBE & PARCHMENT STATS PANEL
      ------------------------------------------------------------------------ */
   function renderHeroLeftPanel(state, derivedStats, actions) {
     const h = state.hero;
@@ -173,7 +296,7 @@ window.GDL_UI = (function () {
           ${Object.values(ART.FACTIONS)
             .map(
               (f) => `
-            <button class="fs-btn ${h.faction === f.id ? 'active' : ''}" data-set-faction="${f.id}" title="${f.desc}">
+            <button class="fs-btn skeuo-bronze-leather-plate ${h.faction === f.id ? 'active' : ''}" data-set-faction="${f.id}" title="${f.desc}">
               ${f.icon} ${f.name.split(' ')[2] || f.name}
             </button>
           `
@@ -184,7 +307,7 @@ window.GDL_UI = (function () {
           ${Object.values(ART.COMBAT_STYLES)
             .map(
               (st) => `
-            <button class="fs-btn ${h.combatStyle === st.id ? 'active' : ''}" data-set-style="${st.id}" title="${st.desc}">
+            <button class="fs-btn skeuo-bronze-leather-plate ${h.combatStyle === st.id ? 'active' : ''}" data-set-style="${st.id}" title="${st.desc}">
               ${st.icon} ${st.shortName}
             </button>
           `
@@ -204,102 +327,48 @@ window.GDL_UI = (function () {
     // Draw dynamic HTML5 Canvas Avatar
     window.GDL_AVATAR.drawHeroAvatar('gdl-hero-avatar-canvas', state);
 
-    // 12 Equipment Slots (6 Left, 6 Right)
-    const leftSlots = [
-      { slot: 'helm', label: 'Yelmo', icon: '🪖' },
-      { slot: 'pauldrons', label: 'Hombreras', icon: '🛡️' },
-      { slot: 'amulet', label: 'Amuleto', icon: '📿' },
-      { slot: 'weapon', label: 'Arma', icon: '🗡️' },
-      { slot: 'armor', label: 'Coraza', icon: '🥋' },
-      { slot: 'bracers', label: 'Brazales', icon: '🧤' }
-    ];
-    const rightSlots = [
-      { slot: 'shield', label: 'Escudo', icon: '🛡️' },
-      { slot: 'cloak', label: 'Manto', icon: '🧥' },
-      { slot: 'cuisses', label: 'Quijotes', icon: '👖' },
-      { slot: 'ring', label: 'Sortija', icon: '💍' },
-      { slot: 'belt', label: 'Cinturón', icon: '🎗️' },
-      { slot: 'boots', label: 'Grebas', icon: '🥾' }
-    ];
-
-    const buildSlotsHtml = (slots) =>
-      slots
-        .map((s) => {
-          const itemId = state.equipment[s.slot];
-          const it = itemId ? ART.ARTIFACTS[itemId] : null;
-          const rawDur = state.equipmentDurability && state.equipmentDurability[s.slot];
-          const maxDur = (it && it.maxDurability) || 60;
-          const durObj = it
-            ? typeof rawDur === 'number'
-              ? { cur: rawDur, max: maxDur }
-              : rawDur && typeof rawDur.cur === 'number'
-              ? rawDur
-              : { cur: maxDur, max: maxDur }
-            : null;
-          const durPct = durObj ? Math.max(0, Math.min(100, Math.round((durObj.cur / Math.max(1, durObj.max)) * 100))) : 100;
-          const runeId = state.equipmentRunes && state.equipmentRunes[s.slot];
-          const runeObj = runeId ? ART.ARTIFACTS[runeId] : null;
-
-          return `
-            <div class="ragdoll-slot ${it ? 'equipped rarity-border-' + it.rarity : ''}" data-inspect-slot="${
-            s.slot
-          }" title="${
-            it
-              ? `${it.name} (Durabilidad: ${durObj.cur}/${durObj.max})${
-                  runeObj ? ' • Runa: ' + runeObj.name : ''
-                } — Clic: Inspeccionar / Doble clic: Desequipar`
-              : s.label + ' (Vacío)'
-          }">
-              ${runeObj ? `<span class="rg-rune-dot" title="${runeObj.name}">${runeObj.icon}</span>` : ''}
-              <span class="rg-icon">${it ? it.icon : s.icon}</span>
-              <span class="rg-label">${it ? it.name : s.label}</span>
-              ${
-                it && durObj
-                  ? `<div class="rg-dur-bar"><div class="rg-dur-fill" style="width:${durPct}%;background:${
-                      durPct > 35 ? 'var(--xp-bright)' : 'var(--crimson-bright)'
-                    }"></div></div>`
-                  : ''
-              }
-            </div>
-          `;
-        })
-        .join('');
-
-    document.getElementById('ragdoll-left-slots').innerHTML = buildSlotsHtml(leftSlots);
-    document.getElementById('ragdoll-right-slots').innerHTML = buildSlotsHtml(rightSlots);
+    const leftSlotsEl = document.getElementById('ragdoll-left-slots');
+    const rightSlotsEl = document.getElementById('ragdoll-right-slots');
+    if (leftSlotsEl) leftSlotsEl.innerHTML = buildPaperdollSlotsHtml(LEFT_SLOTS, state, true);
+    if (rightSlotsEl) rightSlotsEl.innerHTML = buildPaperdollSlotsHtml(RIGHT_SLOTS, state, true);
 
     // Active Mount, Red Pet & Disciple Status Strip
     const activeMountObj = ART.MOUNTS.find((m) => m.id === state.mounts.active);
     const activePetObj = ART.PETS.find((p) => p.id === state.pets.active);
     const activeDiscObj = ART.DISCIPLES.find((d) => d.id === (state.disciples && state.disciples.active));
 
-    document.getElementById('hero-companions-strip').innerHTML = `
-      <span class="comp-chip" data-open-special="mounts" title="Montura Activa">
-        ${activeMountObj ? `${activeMountObj.icon} ${activeMountObj.name.split(' ')[0]}` : '🐎 Sin Montura'}
-      </span>
-      <span class="comp-chip" data-open-special="mounts" title="Mascota Roja Activa (Saciada: ${
-        (state.pets && state.pets.satiety) || 0
-      })">
-        ${activePetObj ? `${activePetObj.icon} ${activePetObj.name.split(' ')[0]}` : '🦅 Sin Mascota'}
-      </span>
-      <span class="comp-chip" data-open-special="mounts" style="grid-column:1 / -1" title="Academia de Discípulos (Ученики)">
-        ${
-          activeDiscObj
-            ? `${activeDiscObj.icon} ${activeDiscObj.name} (Nv.${
-                (state.disciples && state.disciples.levels && state.disciples.levels[activeDiscObj.id]) || 1
-              })`
-            : '🎓 Academia: Sin Discípulo Activo'
-        }
-      </span>
-    `;
+    const compStrip = document.getElementById('hero-companions-strip');
+    if (compStrip) {
+      compStrip.innerHTML = `
+        <span class="comp-chip skeuo-bronze-leather-plate" data-open-special="mounts" title="Montura Activa">
+          ${activeMountObj ? `${activeMountObj.icon} ${activeMountObj.name.split(' ')[0]}` : '🐎 Sin Montura'}
+        </span>
+        <span class="comp-chip skeuo-bronze-leather-plate" data-open-special="mounts" title="Mascota Roja Activa (Saciada: ${
+          (state.pets && state.pets.satiety) || 0
+        })">
+          ${activePetObj ? `${activePetObj.icon} ${activePetObj.name.split(' ')[0]}` : '🦅 Sin Mascota'}
+        </span>
+        <span class="comp-chip skeuo-bronze-leather-plate" data-open-special="mounts" style="grid-column:1 / -1" title="Academia de Discípulos (Ученики)">
+          ${
+            activeDiscObj
+              ? `${activeDiscObj.icon} ${activeDiscObj.name} (Nv.${
+                  (state.disciples && state.disciples.levels && state.disciples.levels[activeDiscObj.id]) || 1
+                })`
+              : '🎓 Academia: Sin Discípulo Activo'
+          }
+        </span>
+      `;
+    }
 
-    // Attributes & Stat Allocation
+    // Attributes & Stat Allocation on Aged Leather Parchment
     const unspentEl = document.getElementById('hero-unspent-pts');
-    if (h.unspentPoints > 0) {
-      unspentEl.style.display = 'inline-block';
-      unspentEl.textContent = `+${h.unspentPoints} PTS`;
-    } else {
-      unspentEl.style.display = 'none';
+    if (unspentEl) {
+      if (h.unspentPoints > 0) {
+        unspentEl.style.display = 'inline-block';
+        unspentEl.textContent = `+${h.unspentPoints} PTS`;
+      } else {
+        unspentEl.style.display = 'none';
+      }
     }
 
     const attrs = [
@@ -312,7 +381,7 @@ window.GDL_UI = (function () {
     const attrsHtml = attrs
       .map(
         (a) => `
-        <div class="attr-row">
+        <div class="attr-row parchment-stat-row">
           <span class="attr-label">${a.label}</span>
           <div class="attr-val-wrap">
             <span class="attr-val">${derivedStats[a.key]}</span>
@@ -328,13 +397,19 @@ window.GDL_UI = (function () {
       .join('');
 
     const derivedHtml = `
-      <div class="attr-row"><span class="attr-label">Ataque Total</span><span class="attr-val gold">${derivedStats.atk}</span></div>
-      <div class="attr-row"><span class="attr-label">Defensa Total</span><span class="attr-val cyan">${derivedStats.def}</span></div>
-      <div class="attr-row"><span class="attr-label">Crítico Solar</span><span class="attr-val green">${derivedStats.crit}%</span></div>
-      <div class="attr-row"><span class="attr-label">Esquiva / Estilo</span><span class="attr-val gold">${derivedStats.dodge || 0}%</span></div>
+      <div class="attr-row parchment-stat-row"><span class="attr-label">Ataque Total</span><span class="attr-val gold">${derivedStats.atk}</span></div>
+      <div class="attr-row parchment-stat-row"><span class="attr-label">Defensa Total</span><span class="attr-val cyan">${derivedStats.def}</span></div>
+      <div class="attr-row parchment-stat-row"><span class="attr-label">Crítico Solar</span><span class="attr-val green">${derivedStats.crit}%</span></div>
+      <div class="attr-row parchment-stat-row"><span class="attr-label">Esquiva / Estilo</span><span class="attr-val gold">${derivedStats.dodge || 0}%</span></div>
     `;
 
-    document.getElementById('hero-attributes-grid').innerHTML = attrsHtml + derivedHtml;
+    const attrGrid = document.getElementById('hero-attributes-grid');
+    if (attrGrid) attrGrid.innerHTML = attrsHtml + derivedHtml;
+
+    const pouchEl = document.getElementById('hero-illustrated-pouch');
+    if (pouchEl) {
+      pouchEl.innerHTML = buildIllustratedCoinPouchHtml(h);
+    }
 
     // Bind stat buttons
     document.querySelectorAll('[data-add-stat]').forEach((btn) => {
@@ -343,7 +418,7 @@ window.GDL_UI = (function () {
       });
     });
 
-    // Bind companion chips
+    // Bind companion chips & Eltic Cube pedestal
     document.querySelectorAll('[data-open-special]').forEach((el) => {
       el.addEventListener('click', () => {
         actions.openSpecialModal(el.getAttribute('data-open-special'));
@@ -372,7 +447,7 @@ window.GDL_UI = (function () {
   }
 
   /* ------------------------------------------------------------------------
-     RENDER RIGHT DOCK: 6-CATEGORY BACKPACK, QUESTS & ASTERIA SYSTEMS HUB
+     RENDER RIGHT DOCK: 10x6 IRON BACKPACK, ELTIC CUBE, PARCHMENT & #artifact_alt
      ------------------------------------------------------------------------ */
   function renderRightDock(state, actions) {
     document.querySelectorAll('[data-right-dock-tab]').forEach((btn) => {
@@ -409,8 +484,8 @@ window.GDL_UI = (function () {
       return it.category === activeCat;
     });
 
-    // Dynamic slot count: never truncate! Show all matching items, minimum 20 cells
-    const totalCells = Math.max(20, Math.ceil((filteredInv.length + 1) / 4) * 4);
+    // Forged Iron 10x6 Backpack Grid (Minimum 60 cells = 10 columns x 6 rows, expands in multiples of 10 so nothing is ever truncated)
+    const totalCells = Math.max(60, Math.ceil((filteredInv.length + 1) / 10) * 10);
     const cellsHtml = [];
 
     for (let i = 0; i < totalCells; i++) {
@@ -419,7 +494,7 @@ window.GDL_UI = (function () {
       if (it) {
         const isSel = state.ui.selectedItem === it.id;
         cellsHtml.push(`
-          <div class="inv-slot rarity-border-${it.rarity} ${isSel ? 'selected' : ''}" data-inv-item="${
+          <div class="inv-slot skeuo-iron-cell rarity-border-${it.rarity} ${isSel ? 'selected' : ''}" data-inv-item="${
           it.id
         }" title="${it.name} (x${entry.qty})">
             <span class="inv-icon">${it.icon}</span>
@@ -427,7 +502,7 @@ window.GDL_UI = (function () {
           </div>
         `);
       } else {
-        cellsHtml.push(`<div class="inv-slot empty"></div>`);
+        cellsHtml.push(`<div class="inv-slot skeuo-iron-cell empty"></div>`);
       }
     }
 
@@ -437,7 +512,11 @@ window.GDL_UI = (function () {
       (state.inventory[0] && state.inventory[0].itemId);
     const selItem = selId ? ART.ARTIFACTS[selId] : null;
 
-    let inspectorHtml = `<div class="item-detail-card"><span style="color:var(--text-muted)">Selecciona un artefacto de tu mochila o de las 12 ranuras de armadura para equipar, desequipar, reparar o engastar runas.</span></div>`;
+    let inspectorHtml = `
+      <div class="item-detail-card skeuo-artifact-tooltip" id="artifact_alt" data-testid="artifact_alt">
+        <div class="artifact-filigree-crown"><span>⚜️ Códice de Reliquia (#artifact_alt) ⚜️</span></div>
+        <span style="color:var(--text-muted)">Selecciona un artefacto de tu Mochila de Hierro (10x6) o de las 12 ranuras de armadura para equipar, desequipar, reparar o engastar runas.</span>
+      </div>`;
 
     if (selItem) {
       const qty = actions.getItemQty(selItem.id);
@@ -488,7 +567,10 @@ window.GDL_UI = (function () {
       }
 
       inspectorHtml = `
-        <div class="item-detail-card rarity-border-${selItem.rarity}">
+        <div class="item-detail-card skeuo-artifact-tooltip rarity-border-${selItem.rarity}" id="artifact_alt" data-testid="artifact_alt">
+          <div class="artifact-filigree-crown">
+            <span>⚜️ RELIQUIA DE ASTERIA • ${(selItem.rarity || 'común').toUpperCase()} ⚜️</span>
+          </div>
           <div class="idc-header">
             <span class="idc-title">${selItem.icon} ${selItem.name}</span>
             <span class="idc-price">${ART.formatCurrencyBadge(Math.floor(selItem.price * 0.5))}</span>
@@ -548,28 +630,61 @@ window.GDL_UI = (function () {
     }
 
     container.innerHTML = `
-      <div class="bag-filter-tabs">
-        ${categories
-          .map(
-            (c) => `
-          <button class="bag-cat-btn ${activeCat === c.id ? 'active' : ''}" data-bag-cat="${c.id}" data-bag-filter="${c.id}">
-            ${c.label}
-          </button>
-        `
-          )
-          .join('')}
-      </div>
-      <div class="bag-toolbar-strip">
-        <span>Objetos: <strong>${filteredInv.length}</strong> / ${state.inventory.length} tipos</span>
-        <div style="display:flex;gap:4px">
-          <button class="btn-asteria sm" id="btn-bag-repair-all" title="Reparar las 12 piezas equipadas al 100%">🔧 Reparar Todo</button>
-          <button class="btn-asteria sm ${state.hero.antiXpActive ? 'gold' : ''}" id="btn-bag-toggle-antixp" title="Activar/Desactivar Anillo Anti-XP">💍 Anti-XP</button>
+      <div class="skeuo-bag-chamber-layout">
+        <!-- CENTER: FORGED IRON 10x6 BACKPACK GRID + 3D EMERALD ELTIC CUBE CHAMBER -->
+        <div class="skeuo-bag-iron-column">
+          <div class="bag-filter-tabs">
+            ${categories
+              .map(
+                (c) => `
+              <button class="bag-cat-btn skeuo-wax-seal-tab ${activeCat === c.id ? 'active' : ''}" data-bag-cat="${c.id}" data-bag-filter="${c.id}">
+                ${c.label}
+              </button>
+            `
+              )
+              .join('')}
+          </div>
+          <div class="bag-toolbar-strip">
+            <span>Rejilla de Hierro Forjado (10x6): <strong>${filteredInv.length}</strong> / ${state.inventory.length} tipos</span>
+            <div style="display:flex;gap:4px">
+              <button class="btn-asteria sm skeuo-wax-seal" id="btn-bag-repair-all" title="Reparar las 12 piezas equipadas al 100%">🔧 Reparar Todo</button>
+              <button class="btn-asteria sm skeuo-wax-seal ${state.hero.antiXpActive ? 'gold' : ''}" id="btn-bag-toggle-antixp" title="Activar/Desactivar Anillo Anti-XP">💍 Anti-XP</button>
+            </div>
+          </div>
+
+          <!-- 10x6 FORGED IRON BACKPACK GRID -->
+          <div class="inv-grid-expandable skeuo-iron-grid-10x6" data-testid="iron-backpack-10x6">
+            ${cellsHtml.join('')}
+          </div>
+
+          <!-- DEDICATED EMERALD 3D ELTIC CUBE RUNIC CHAMBER -->
+          <div class="skeuo-bag-eltic-chamber" data-testid="eltic-cube-chamber">
+            <img src="assets/ui/eltic_cube_3d.jpg" alt="Cubo Éltico 3D" class="bag-eltic-thumb" />
+            <div class="bag-eltic-info">
+              <div class="box-header-ornate" style="border:none;padding:0">
+                <span>🧊 Cámara Rúnica del Cubo Éltico 3D</span>
+                <span class="entity-badge" style="border-color:var(--xp-bright);color:var(--xp-bright)">Fulgor Esmeralda</span>
+              </div>
+              <p style="font-size:11px;color:var(--text-muted);margin:3px 0">Sintetiza Fragmentos Élticos, Luminita y Núcleos de Obsidiana en artefactos míticos.</p>
+            </div>
+            <button class="btn-asteria sm gold skeuo-bronze-leather-plate" id="btn-bag-open-eltic-cube">🧊 Abrir Cubo Éltico</button>
+          </div>
+        </div>
+
+        <!-- RIGHT: GOLDEN FILIGREE TOOLTIP (#artifact_alt) & ILLUSTRATED COIN POUCH -->
+        <div class="skeuo-bag-inspector-column">
+          ${inspectorHtml}
+          <div class="skeuo-aged-parchment-scroll" style="margin-top:8px;padding:10px">
+            <div class="box-header-ornate parchment-ink-header">
+              <span>🪙 Monedero Ilustrado (Oro / Plata / Bronce)</span>
+              <span>Tesoro</span>
+            </div>
+            <div class="skeuo-illustrated-coin-pouch" style="margin-top:6px">
+              ${buildIllustratedCoinPouchHtml(state.hero)}
+            </div>
+          </div>
         </div>
       </div>
-      <div class="inv-grid-expandable">
-        ${cellsHtml.join('')}
-      </div>
-      ${inspectorHtml}
     `;
 
     // Category filter click
@@ -579,6 +694,12 @@ window.GDL_UI = (function () {
         renderRightInventoryBag(container, state, actions);
       });
     });
+
+    // Open Eltic Cube modal from dedicated chamber
+    const cubeBtn = container.querySelector('#btn-bag-open-eltic-cube');
+    if (cubeBtn) {
+      cubeBtn.addEventListener('click', () => actions.openSpecialModal('cube'));
+    }
 
     // Repair all button
     const repBtn = container.querySelector('#btn-bag-repair-all');
@@ -660,18 +781,18 @@ window.GDL_UI = (function () {
       const pct = Math.round((prog / q.targetCount) * 100);
 
       return `
-        <div class="compact-quest-card ${claimed ? 'done' : ''} ${ready ? 'ready' : ''}">
+        <div class="compact-quest-card skeuo-aged-parchment-card ${claimed ? 'done' : ''} ${ready ? 'ready' : ''}">
           <div class="cq-head">
-            <strong>${q.title}</strong>
+            <strong>📜 ${q.title}</strong>
             <span>${prog}/${q.targetCount}</span>
           </div>
           <p class="cq-desc">${q.desc}</p>
-          <div class="asteria-bar-track"><div class="asteria-bar-fill xp" style="width:${pct}%"></div></div>
+          <div class="asteria-bar-track skeuo-beveled-track"><div class="asteria-bar-fill xp" style="width:${pct}%"></div></div>
           <div class="cq-foot">
             <span>${ART.formatCurrencyBadge(q.rewardCopper)} • +${q.rewardXp} XP</span>
             ${
               ready
-                ? `<button class="btn-asteria sm gold" data-quick-claim="${q.id}">Reclamar</button>`
+                ? `<button class="btn-asteria sm gold skeuo-wax-seal" data-quick-claim="${q.id}">Reclamar</button>`
                 : claimed
                 ? `<span style="color:var(--xp-bright);font-size:11px">✓ Cumplida</span>`
                 : ''
@@ -712,7 +833,7 @@ window.GDL_UI = (function () {
         ${systems
           .map(
             (s) => `
-          <button class="special-hub-btn" data-hub-modal="${s.id}">
+          <button class="special-hub-btn skeuo-bronze-leather-plate" data-hub-modal="${s.id}">
             <span class="sh-icon">${s.icon}</span>
             <div class="sh-meta">
               <strong>${s.title}</strong>
@@ -734,6 +855,10 @@ window.GDL_UI = (function () {
 
   return {
     AudioFX,
+    LEFT_SLOTS,
+    RIGHT_SLOTS,
+    buildPaperdollSlotsHtml,
+    buildIllustratedCoinPouchHtml,
     renderTopHeader,
     renderHeroLeftPanel,
     renderRightDock

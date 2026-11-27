@@ -31,8 +31,8 @@ window.GDL_SPECIAL_MODALS = (function () {
     const bodyEl = document.getElementById('gdl-modal-body');
     if (!backdrop || !titleEl || !bodyEl) return null;
 
-    titleEl.innerHTML = titleHtml;
-    bodyEl.innerHTML = bodyHtml;
+    titleEl.innerHTML = `<span class="skeuo-modal-crown-gem"></span> ${titleHtml}`;
+    bodyEl.innerHTML = `<div class="skeuo-reliquary-modal-inner">${bodyHtml}</div>`;
     backdrop.classList.remove('hidden');
     return bodyEl;
   }
@@ -237,11 +237,11 @@ window.GDL_SPECIAL_MODALS = (function () {
       `
         <div class="npc-hd-hero-banner" style="background-image:url('${ART.LOCATION_IMAGES.cuevas_cristalinas}')">
           <div class="npc-hd-banner-overlay"></div>
-          <div class="npc-hd-portrait-frame">
-            <img src="${ART.NPC_IMAGES.alquimista_selene}" alt="Cubo Éltico" />
+          <div class="npc-hd-portrait-frame skeuo-emerald-cube-frame">
+            <img src="assets/ui/eltic_cube_3d.jpg" alt="Cubo Éltico 3D" />
           </div>
           <div class="npc-hd-dialogue-content">
-            <span class="scene-subtitle-pill">Artefacto de los Antiguos Arquitectos</span>
+            <span class="scene-subtitle-pill">Artefacto de los Antiguos Arquitectos • Fulgor Esmeralda 3D</span>
             <h3>Transmutación en el Cubo Éltico</h3>
             <p class="npc-quote-text">Combina Fragmentos Élticos, Cristales de Luminita, Runas del Templo Antiguo y Núcleos de Obsidiana para sintetizar Runas de Inevitabilidad, Panaceas y armas míticas.</p>
           </div>

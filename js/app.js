@@ -2770,7 +2770,8 @@ window.GDL_APP = (function () {
         damageDealt: combatState.stats.dmgDealt,
         damageTaken: combatState.stats.dmgTaken,
         ...combatState.stats,
-        valorEarned
+        valorEarned,
+        log: [...(combatState.log || [])]
       };
       state.lastFightInfo = info;
       state.world.lastFightInfo = info;
